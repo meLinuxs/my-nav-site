@@ -12,7 +12,7 @@
         /* Base font styles */
         html[lang="zh-CN"] body { font-family: 'Inter', 'Helvetica Neue', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', 'Microsoft Yahei', sans-serif; }
         body { font-family: 'Inter', sans-serif; transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out; }
-        
+
         /* UI element styles */
         .backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
         .modal { display: none; }
@@ -56,7 +56,7 @@
         .light-mode .bg-gray-900 { background-color: var(--panel-bg); }
         .light-mode .bg-black.bg-opacity-20 { background-color: var(--card-bg); } /* Match your card opacity */
         .light-mode .hover\:bg-opacity-60:hover { background-color: var(--card-hover-bg); }
-        
+
         /* Drag-and-drop styles */
         .sortable-ghost { opacity: 0.4; background: #4a5568; }
         .sortable-chosen { background: #2d3748; }
@@ -76,7 +76,6 @@
     </style>
 </head>
 <body class="bg-gray-900 text-white">
-    
     <canvas id="sakura-canvas"></canvas>
 
     <div id="app-container" class="flex h-screen">
@@ -178,7 +177,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="generic-modal" class="modal fixed inset-0 bg-black bg-opacity-70 items-center justify-center p-4 z-50">
         <div class="bg-gray-800 rounded-lg p-8 w-full max-w-sm text-center shadow-2xl">
             <p id="generic-modal-text" class="mb-6 text-lg"></p>
@@ -283,7 +282,7 @@
                 return Promise.reject({ status: res.status, statusText: res.statusText, body: errorDetails });
             }),
         };
-        
+
         // --- UI Functions ---
         function setLanguage(lang) {
             state.currentLanguage = lang;
@@ -345,7 +344,7 @@
                 { text: translations[state.currentLanguage].modalConfirm, class: 'flex-1 bg-red-600 hover:bg-red-700 rounded-md py-2 px-4 font-semibold', onClick: onConfirm }
             ]);
         }
-        
+
         function resetSiteForm() {
             state.editingSiteId = null;
             DOMElements.siteForm.reset();
@@ -414,7 +413,7 @@
 
         function renderAdminPanel() {
             if (!state.isLoggedIn) return;
-            
+
             DOMElements.categoriesList.innerHTML = '';
             const sidebarCats = state.categories.filter(c => c.type === 'sidebar');
             const topbarCats = state.categories.filter(c => c.type === 'topbar');
@@ -458,7 +457,7 @@
 
             createSortableList('sidebar', sidebarCats);
             createSortableList('topbar', topbarCats);
-            
+
             DOMElements.sitesListAdmin.innerHTML = '';
             state.sites.forEach(site => {
                 const cat = state.categories.find(c => c.id == site.categoryId);
@@ -509,7 +508,9 @@
                     state.isLoggedIn = true;
                     DOMElements.loginError.textContent = '';
                     DOMElements.adminLoginView.style.display = 'none';
-                    DOMElements.adminPanelView.style.display = 'block';
+                    // FIX: Changed 'block' to 'flex' to match the element's Tailwind classes
+                    // This restores the flexbox layout, allowing the inner container to scroll.
+                    DOMElements.adminPanelView.style.display = 'flex';
                     renderAdminPanel();
                 } else {
                     DOMElements.loginError.textContent = translations[state.currentLanguage].passwordIncorrect;
@@ -523,7 +524,7 @@
                 }
             };
             DOMElements.addCategoryForm.onsubmit = async (e) => { e.preventDefault(); const name = DOMElements.categoryNameInput.value.trim(); const type = DOMElements.categoryTypeSelect.value; if (name) { await api.post('categories', { name, type }); DOMElements.categoryNameInput.value = ''; loadInitialData(); } };
-            
+
             DOMElements.siteForm.onsubmit = async (e) => {
                 e.preventDefault();
                 const site = { categoryId: DOMElements.siteCategorySelect.value, name: DOMElements.siteNameInput.value.trim(), url: DOMElements.siteUrlInput.value.trim(), icon: DOMElements.siteIconInput.value.trim(), description: DOMElements.siteDescInput.value.trim() };
@@ -544,7 +545,7 @@
             };
 
             DOMElements.categoriesList.onclick = async (e) => { const btn = e.target.closest('.delete-category-btn'); if (btn) { customConfirm('confirmCategoryDeletion', async () => { await api.delete(`categories/${btn.dataset.id}`); loadInitialData(); }); } };
-            
+
             DOMElements.sitesListAdmin.onclick = async (e) => {
                 const deleteBtn = e.target.closest('.delete-site-btn');
                 if (deleteBtn) {
@@ -574,7 +575,7 @@
                     }
                 }
             };
-            
+
             DOMElements.cancelEditBtn.onclick = resetSiteForm;
 
             DOMElements.saveOrderBtn.onclick = async () => {
@@ -598,12 +599,12 @@
                 if (url && !DOMElements.siteIconInput.value.trim()) { try { const domain = new URL(url).hostname; const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`; DOMElements.siteIconInput.value = iconUrl; DOMElements.iconPreview.src = iconUrl; } catch (e) { /* ignore invalid urls */ } }
             };
             DOMElements.siteIconInput.oninput = () => { DOMElements.iconPreview.src = DOMElements.siteIconInput.value.trim() || 'https://placehold.co/32x32/777/eee?text=?'; };
-            
+
             DOMElements.mobileMenuToggle.onclick = (e) => { e.stopPropagation(); toggleMobileSidebar(); };
             DOMElements.mobileSidebarClose.onclick = toggleMobileSidebar;
             DOMElements.desktopSidebarToggle.onclick = toggleDesktopSidebar;
         }
-        
+
         // --- Sidebar Toggle Functions ---
         function toggleMobileSidebar() {
             DOMElements.mobileSidebar.classList.toggle('-translate-x-full');
@@ -704,7 +705,7 @@
                     api.get('categories'),
                     api.get('sites'),
                 ]);
-                
+
                 if (settings && settings.value) {
                     DOMElements.body.style.backgroundImage = `url('${settings.value}')`;
                     DOMElements.body.style.backgroundSize = 'cover';
@@ -724,7 +725,7 @@
         async function init() {
             lucide.createIcons();
             setupEventListeners();
-            
+
             const savedDesktopSidebarState = localStorage.getItem('desktopSidebarState');
             if (savedDesktopSidebarState === 'collapsed') {
                 DOMElements.appContainer.classList.add('sidebar-collapsed');
@@ -734,11 +735,11 @@
             }
 
             await loadInitialData();
-            
+
             const savedTheme = localStorage.getItem('theme');
             const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             setTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light'));
-            
+
             const savedLang = localStorage.getItem('lang');
             const browserLang = navigator.language.startsWith('zh') ? 'zh' : 'en';
             setLanguage(savedLang || browserLang);
