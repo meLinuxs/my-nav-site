@@ -2,7 +2,7 @@
 
 示例站点：https://nas.ikun.pp.ua/
 
-<img src="https://img.8888.vvvv.ee/file/图片/1753689673084.png" alt="屏幕截图 2025-07-28 160035.png" width=100% />
+[img]https://img.8888.vvvv.ee/file/图片/1753689673084.png[/img]
 
 一、项目核心特点与功能
 这个导航站项目最大的特点是完全构建于 Cloudflare 的生态系统之上，实现了真正的“全栈无服务器化”，集高性能、高安全性和零成本于一身。
