@@ -93,3 +93,5 @@ ALTER TABLE categories ADD COLUMN displayOrder INTEGER;
 4.管理员密码默认`password123`，可变量`ADMIN_PASSWORD`修改或到index.html文件第225行修改。
 
 5.添加网站可以到`https://favicon.im/zh/`获取网站图标。
+
+更多内容请关注我的博客：https://blog.marvel.qzz.io
