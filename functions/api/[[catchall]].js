@@ -24,7 +24,6 @@ async function handleApiRequest(request, env) {
   try {
     switch (resource) {
       case 'settings':
-        // ... (代码未更改)
         if (request.method === 'GET') {
           const stmt = env.DB.prepare('SELECT * FROM settings WHERE key = ?').bind('backgroundUrl');
           const { results } = await stmt.all();
@@ -40,7 +39,6 @@ async function handleApiRequest(request, env) {
         break;
 
       case 'categories':
-        // ... (代码未更改)
         if (request.method === 'GET') {
           const { results } = await env.DB.prepare('SELECT * FROM categories ORDER BY displayOrder, id').all();
           return jsonResponse(results || []);
@@ -48,8 +46,10 @@ async function handleApiRequest(request, env) {
         if (request.method === 'POST' && pathParts[2] !== 'order') {
           const { name, type } = await request.json();
           if (!name || !type) return jsonResponse({ error: 'Missing fields' }, 400);
+          
           const { results } = await env.DB.prepare('SELECT MAX(displayOrder) as maxOrder FROM categories').all();
           const newOrder = (results[0].maxOrder || 0) + 1;
+
           const stmt = env.DB.prepare('INSERT INTO categories (name, type, displayOrder) VALUES (?, ?, ?)')
             .bind(name, type, newOrder);
           const { meta } = await stmt.run();
@@ -64,9 +64,11 @@ async function handleApiRequest(request, env) {
             if (!Array.isArray(orderedIds)) {
                 return jsonResponse({ error: 'Invalid data format, expected orderedIds array' }, 400);
             }
+
             const statements = orderedIds.map((id, index) => {
                 return env.DB.prepare('UPDATE categories SET displayOrder = ? WHERE id = ?').bind(index, id);
             });
+
             await env.DB.batch(statements);
             return jsonResponse({ success: true });
         }
@@ -85,7 +87,6 @@ async function handleApiRequest(request, env) {
           const { meta } = await stmt.run();
           return jsonResponse({ success: true, id: meta.last_row_id });
         }
-        // 新增: PUT /api/sites/:id - 更新一个已存在的网站
         if (request.method === 'PUT' && id) {
             const { categoryId, name, url, icon, description } = await request.json();
             if (!categoryId || !name || !url) return jsonResponse({ error: 'Missing fields' }, 400);
@@ -116,4 +117,3 @@ async function handleApiRequest(request, env) {
 export const onRequest = async ({ request, env }) => {
   return await handleApiRequest(request, env);
 };
-
