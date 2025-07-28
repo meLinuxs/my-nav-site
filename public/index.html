@@ -47,7 +47,7 @@
         }
 
         body.light-mode { background-color: var(--bg-color); color: var(--text-color); }
-        .light-mode .bg-black.bg-opacity-10 { background-color: var(--ui-bg); border-bottom: 1px solid var(--ui-border); } /* Updated for your opacity */
+        .light-mode .bg-black.bg-opacity-10 { background-color: var(--ui-bg); border-bottom: 1px solid var(--ui-border); } /* Corrected for your opacity */
         .light-mode .bg-gray-700 { background-color: var(--input-bg); }
         .light-mode .text-gray-400 { color: var(--text-muted); }
         .light-mode input, .light-mode select, .light-mode textarea { color: var(--input-text); }
@@ -121,7 +121,7 @@
     </div>
 
     <div id="admin-modal" class="modal fixed inset-0 bg-black bg-opacity-70 items-center justify-center p-4 z-50">
-        <div id="admin-login-view" class="bg-gray-800 rounded-lg p-8 w-full max-w-md">
+        <div id="admin-login-view" class="bg-gray-800 rounded-lg p-6 w-full max-w-md">
             <h2 class="text-2xl font-bold mb-6 text-center" data-i18n-key="adminLogin">Admin Login</h2>
             <form id="login-form">
                 <input type="password" id="password-input" data-i18n-key="passwordPlaceholder" placeholder="Enter admin password" class="w-full bg-gray-700 border border-gray-600 rounded-md p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -129,7 +129,7 @@
             </form>
             <p id="login-error" class="text-red-500 text-center mt-4"></p>
         </div>
-        <div id="admin-panel-view" class="hidden bg-gray-800 rounded-lg p-8 w-full max-w-6xl h-full max-h-[90vh] flex flex-col">
+        <div id="admin-panel-view" class="hidden bg-gray-800 rounded-lg p-4 md:p-8 w-full max-w-6xl h-full max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-3xl font-bold" data-i18n-key="adminPanel">Admin Panel</h2>
                 <button id="admin-logout-btn" class="p-2 rounded-md hover:bg-gray-700"><i data-lucide="x"></i></button>
@@ -137,9 +137,9 @@
             <div class="flex-grow overflow-y-auto pr-4">
                 <div class="bg-gray-900 p-6 rounded-lg mb-6">
                     <h3 class="text-xl font-semibold mb-4" data-i18n-key="globalSettings">Global Settings</h3>
-                    <div class="flex items-center space-x-4">
-                        <input type="text" id="background-url-input" data-i18n-key="backgroundPlaceholder" placeholder="Enter background image URL" class="flex-grow bg-gray-700 border border-gray-600 rounded-md p-2">
-                        <button id="save-background-btn" class="bg-green-600 hover:bg-green-700 rounded-md py-2 px-4 font-semibold" data-i18n-key="saveBackground">Save Background</button>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <input type="text" id="background-url-input" data-i18n-key="backgroundPlaceholder" placeholder="Enter background image URL" class="w-full flex-grow bg-gray-700 border border-gray-600 rounded-md p-2">
+                        <button id="save-background-btn" class="w-full sm:w-auto flex-shrink-0 bg-green-600 hover:bg-green-700 rounded-md py-2 px-4 font-semibold" data-i18n-key="saveBackground">Save Background</button>
                     </div>
                 </div>
                 <div class="bg-gray-900 p-6 rounded-lg mb-6">
@@ -147,13 +147,13 @@
                         <h3 class="text-xl font-semibold" data-i18n-key="categoryManagement">Category Management</h3>
                         <button id="save-order-btn" class="bg-purple-600 hover:bg-purple-700 rounded-md py-1 px-3 text-sm font-semibold hidden" data-i18n-key="saveOrder">Save Order</button>
                     </div>
-                    <form id="add-category-form" class="flex items-center space-x-2 mb-4">
-                        <input type="text" id="category-name-input" data-i18n-key="newCategoryPlaceholder" placeholder="New category name" class="flex-grow bg-gray-700 border border-gray-600 rounded-md p-2" required>
-                        <select id="category-type-select" class="bg-gray-700 border border-gray-600 rounded-md p-2">
+                    <form id="add-category-form" class="flex flex-col sm:flex-row gap-2 mb-4">
+                        <input type="text" id="category-name-input" data-i18n-key="newCategoryPlaceholder" placeholder="New category name" class="w-full flex-grow bg-gray-700 border border-gray-600 rounded-md p-2" required>
+                        <select id="category-type-select" class="w-full sm:w-auto bg-gray-700 border border-gray-600 rounded-md p-2">
                             <option value="sidebar" data-i18n-key="sidebar">Sidebar</option>
                             <option value="topbar" data-i18n-key="topbar">Topbar</option>
                         </select>
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 p-2 rounded-md"><i data-lucide="plus"></i></button>
+                        <button type="submit" class="w-full sm:w-auto flex-shrink-0 bg-blue-600 hover:bg-blue-700 p-2 rounded-md"><i data-lucide="plus"></i></button>
                     </form>
                     <div id="categories-list" class="space-y-2"></div>
                 </div>
