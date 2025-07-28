@@ -37,4 +37,4 @@ ALTER TABLE categories ADD COLUMN displayOrder INTEGER;
 
 3.绑定D1数据库，名称为`DB`,重新部署令数据库生效。
 
-4.管理员密码默认`password123`，可变量修改或到index.html文件第行修改。
+4.管理员密码默认`password123`，可变量`ADMIN_PASSWORD`修改或到index.html文件第225行修改。
