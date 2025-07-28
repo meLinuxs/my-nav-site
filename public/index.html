@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Navigation Site</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-image 0.5s ease-in-out;
+        }
+        .backdrop-blur-md {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+        .icon-preview { width: 32px; height: 32px; object-fit: contain; border-radius: 6px; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white transition-all duration-500">
+
+    <!-- Main Application Container -->
+    <div id="app-container" class="flex h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="bg-black bg-opacity-30 backdrop-blur-md w-64 p-6 hidden md:flex flex-col flex-shrink-0">
+            <h1 class="text-2xl font-bold mb-8 text-center">Navigation Menu</h1>
+            <nav id="sidebar-nav" class="flex-grow space-y-2"></nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header/Topbar -->
+            <header class="bg-black bg-opacity-30 backdrop-blur-md shadow-lg p-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <button id="menu-toggle" class="md:hidden mr-4 p-2 rounded-md hover:bg-gray-700"><i data-lucide="menu"></i></button>
+                    <div class="relative w-full max-w-xs">
+                        <input type="text" id="search-input" placeholder="Search sites..." class="bg-gray-700 border border-gray-600 rounded-full py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3"><i data-lucide="search" class="text-gray-400"></i></div>
+                    </div>
+                </div>
+                <nav id="topbar-nav" class="hidden lg:flex items-center space-x-4"></nav>
+                <button id="admin-login-btn" class="p-2 rounded-md hover:bg-gray-700"><i data-lucide="settings"></i></button>
+            </header>
+            <!-- Site Content Grid -->
+            <div id="content-grid" class="flex-1 p-8 overflow-y-auto"></div>
+        </main>
+    </div>
+
+    <!-- Mobile Sidebar -->
+    <div id="mobile-sidebar-container" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleMobileSidebar()"></div>
+    <div id="mobile-sidebar" class="fixed top-0 left-0 h-full w-64 bg-gray-800 shadow-lg p-6 transform -translate-x-full transition-transform duration-300 ease-in-out z-50">
+         <h1 class="text-2xl font-bold mb-8 text-center">Navigation Menu</h1>
+         <nav id="mobile-sidebar-nav" class="flex-grow space-y-2"></nav>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div id="admin-modal" class="modal fixed inset-0 bg-black bg-opacity-70 items-center justify-center p-4 z-50">
+        <!-- Login View -->
+        <div id="admin-login-view" class="bg-gray-800 rounded-lg p-8 w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-6 text-center">Admin Login</h2>
+            <form id="login-form">
+                <input type="password" id="password-input" placeholder="Enter admin password" class="w-full bg-gray-700 border border-gray-600 rounded-md p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 rounded-md p-3 font-semibold transition-colors">Login</button>
+            </form>
+            <p id="login-error" class="text-red-500 text-center mt-4"></p>
+        </div>
+        <!-- Main Admin Panel View -->
+        <div id="admin-panel-view" class="hidden bg-gray-800 rounded-lg p-8 w-full max-w-6xl h-full max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">Admin Panel</h2>
+                <button id="admin-logout-btn" class="p-2 rounded-md hover:bg-gray-700"><i data-lucide="x"></i></button>
+            </div>
+            <div class="flex-grow overflow-y-auto pr-4">
+                <!-- Global Settings -->
+                <div class="bg-gray-900 p-6 rounded-lg mb-6">
+                    <h3 class="text-xl font-semibold mb-4">Global Settings</h3>
+                    <div class="flex items-center space-x-4">
+                        <input type="text" id="background-url-input" placeholder="Enter background image URL" class="flex-grow bg-gray-700 border border-gray-600 rounded-md p-2">
+                        <button id="save-background-btn" class="bg-green-600 hover:bg-green-700 rounded-md py-2 px-4 font-semibold">Save Background</button>
+                    </div>
+                </div>
+                <!-- Category Management -->
+                <div class="bg-gray-900 p-6 rounded-lg mb-6">
+                    <h3 class="text-xl font-semibold mb-4">Category Management</h3>
+                    <form id="add-category-form" class="flex items-center space-x-2 mb-4">
+                        <input type="text" id="category-name-input" placeholder="New category name" class="flex-grow bg-gray-700 border border-gray-600 rounded-md p-2" required>
+                        <select id="category-type-select" class="bg-gray-700 border border-gray-600 rounded-md p-2">
+                            <option value="sidebar">Sidebar</option>
+                            <option value="topbar">Topbar</option>
+                        </select>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 p-2 rounded-md"><i data-lucide="plus"></i></button>
+                    </form>
+                    <div id="categories-list" class="space-y-2"></div>
+                </div>
+                <!-- Site Management -->
+                <div class="bg-gray-900 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4">Site Management</h3>
+                    <form id="add-site-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end mb-6 p-4 bg-gray-800 rounded-lg">
+                        <select id="site-category-select" class="bg-gray-700 border border-gray-600 rounded-md p-2" required><option value="">Select a category</option></select>
+                        <input type="text" id="site-name-input" placeholder="Site Name" class="bg-gray-700 rounded-md p-2" required>
+                        <input type="url" id="site-url-input" placeholder="Site URL" class="bg-gray-700 rounded-md p-2" required>
+                        <div class="flex items-center space-x-2">
+                           <input type="text" id="site-icon-input" placeholder="Icon URL (optional)" class="flex-grow bg-gray-700 rounded-md p-2">
+                           <img id="icon-preview" src="https://placehold.co/32x32/777/eee?text=?" alt="Icon Preview" class="icon-preview">
+                        </div>
+                        <textarea id="site-desc-input" placeholder="Site Description" class="bg-gray-700 rounded-md p-2 md:col-span-2 lg:col-span-3" rows="2"></textarea>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 rounded-md py-2 px-4 font-semibold">Add Site</button>
+                    </form>
+                    <div id="sites-list-admin" class="space-y-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Generic Modal for Alerts/Confirmations -->
+    <div id="generic-modal" class="modal fixed inset-0 bg-black bg-opacity-70 items-center justify-center p-4 z-50">
+        <div class="bg-gray-800 rounded-lg p-8 w-full max-w-sm text-center shadow-2xl">
+            <p id="generic-modal-text" class="mb-6 text-lg"></p>
+            <div id="generic-modal-buttons" class="flex justify-center space-x-4"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // --- Global State and Configuration ---
+        const ADMIN_PASSWORD = "password123"; // IMPORTANT: For production, change this password.
+        let state = {
+            categories: [],
+            sites: [],
+            selectedCategory: 'all',
+            isLoggedIn: false,
+        };
+
+        // --- DOM Elements Cache ---
+        const DOMElements = {
+            sidebarNav: document.getElementById('sidebar-nav'),
+            mobileSidebarNav: document.getElementById('mobile-sidebar-nav'),
+            topbarNav: document.getElementById('topbar-nav'),
+            contentGrid: document.getElementById('content-grid'),
+            searchInput: document.getElementById('search-input'),
+            adminLoginBtn: document.getElementById('admin-login-btn'),
+            adminModal: document.getElementById('admin-modal'),
+            adminLoginView: document.getElementById('admin-login-view'),
+            adminPanelView: document.getElementById('admin-panel-view'),
+            loginForm: document.getElementById('login-form'),
+            passwordInput: document.getElementById('password-input'),
+            loginError: document.getElementById('login-error'),
+            adminLogoutBtn: document.getElementById('admin-logout-btn'),
+            backgroundUrlInput: document.getElementById('background-url-input'),
+            saveBackgroundBtn: document.getElementById('save-background-btn'),
+            addCategoryForm: document.getElementById('add-category-form'),
+            categoryNameInput: document.getElementById('category-name-input'),
+            categoryTypeSelect: document.getElementById('category-type-select'),
+            categoriesList: document.getElementById('categories-list'),
+            addSiteForm: document.getElementById('add-site-form'),
+            siteCategorySelect: document.getElementById('site-category-select'),
+            siteNameInput: document.getElementById('site-name-input'),
+            siteUrlInput: document.getElementById('site-url-input'),
+            siteIconInput: document.getElementById('site-icon-input'),
+            siteDescInput: document.getElementById('site-desc-input'),
+            sitesListAdmin: document.getElementById('sites-list-admin'),
+            iconPreview: document.getElementById('icon-preview'),
+            menuToggle: document.getElementById('menu-toggle'),
+            mobileSidebar: document.getElementById('mobile-sidebar'),
+            mobileSidebarContainer: document.getElementById('mobile-sidebar-container'),
+            genericModal: document.getElementById('generic-modal'),
+            genericModalText: document.getElementById('generic-modal-text'),
+            genericModalButtons: document.getElementById('generic-modal-buttons'),
+        };
+
+        // --- API Client with Enhanced Error Handling ---
+        const api = {
+            get: (endpoint) => fetch(`${window.location.origin}/api/${endpoint}`).then(async res => {
+                if (res.ok) return res.json();
+                const errorDetails = await res.text().catch(() => 'Could not read error body.');
+                return Promise.reject({ status: res.status, statusText: res.statusText, body: errorDetails });
+            }),
+            post: (endpoint, body) => fetch(`${window.location.origin}/api/${endpoint}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            }).then(async res => {
+                if (res.ok) return res.json();
+                const errorDetails = await res.text().catch(() => 'Could not read error body.');
+                return Promise.reject({ status: res.status, statusText: res.statusText, body: errorDetails });
+            }),
+            delete: (endpoint) => fetch(`${window.location.origin}/api/${endpoint}`, { method: 'DELETE' }).then(async res => {
+                if (res.ok) return res.json();
+                const errorDetails = await res.text().catch(() => 'Could not read error body.');
+                return Promise.reject({ status: res.status, statusText: res.statusText, body: errorDetails });
+            }),
+        };
+
+        // --- Custom Modal Utilities ---
+        function showModal(text, buttons) {
+            DOMElements.genericModalText.textContent = text;
+            DOMElements.genericModalButtons.innerHTML = '';
+            buttons.forEach(btn => {
+                const buttonEl = document.createElement('button');
+                buttonEl.textContent = btn.text;
+                buttonEl.className = btn.class;
+                buttonEl.onclick = () => {
+                    DOMElements.genericModal.classList.remove('active');
+                    if (btn.onClick) btn.onClick();
+                };
+                DOMElements.genericModalButtons.appendChild(buttonEl);
+            });
+            DOMElements.genericModal.classList.add('active');
+        }
+        function customAlert(text) {
+            showModal(text, [{ text: 'OK', class: 'w-full bg-blue-600 hover:bg-blue-700 rounded-md py-2 px-4 font-semibold' }]);
+        }
+        function customConfirm(text, onConfirm) {
+            showModal(text, [
+                { text: 'Cancel', class: 'flex-1 bg-gray-600 hover:bg-gray-700 rounded-md py-2 px-4 font-semibold' },
+                { text: 'Confirm', class: 'flex-1 bg-red-600 hover:bg-red-700 rounded-md py-2 px-4 font-semibold', onClick: onConfirm }
+            ]);
+        }
+
+        // --- Rendering Functions ---
+        function renderCategories() {
+            const createLink = (cat, isMobile = false) => {
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = cat.name;
+                a.dataset.categoryId = cat.id;
+                a.className = `block px-4 py-2 rounded-md transition-colors ${state.selectedCategory == cat.id ? 'bg-blue-600 text-white' : 'hover:bg-gray-700'}`;
+                a.onclick = e => {
+                    e.preventDefault();
+                    state.selectedCategory = cat.id;
+                    if (isMobile) toggleMobileSidebar();
+                    renderAll();
+                };
+                return a;
+            };
+
+            ['sidebarNav', 'mobileSidebarNav', 'topbarNav'].forEach(key => DOMElements[key].innerHTML = '');
+            
+            DOMElements.sidebarNav.appendChild(createLink({ id: 'all', name: 'All Sites' }));
+            DOMElements.mobileSidebarNav.appendChild(createLink({ id: 'all', name: 'All Sites' }, true));
+
+            state.categories.forEach(cat => {
+                if (cat.type === 'sidebar') {
+                    DOMElements.sidebarNav.appendChild(createLink(cat));
+                    DOMElements.mobileSidebarNav.appendChild(createLink(cat, true));
+                } else if (cat.type === 'topbar') {
+                    DOMElements.topbarNav.appendChild(createLink(cat));
+                }
+            });
+        }
+
+        function renderSites(sitesToRender) {
+            DOMElements.contentGrid.innerHTML = '';
+            if (!sitesToRender || sitesToRender.length === 0) {
+                DOMElements.contentGrid.innerHTML = '<p class="text-gray-400">No sites found.</p>';
+                return;
+            }
+
+            const sitesByCat = sitesToRender.reduce((acc, site) => {
+                (acc[site.categoryId] = acc[site.categoryId] || []).push(site);
+                return acc;
+            }, {});
+
+            const categoryOrder = state.categories.map(c => c.id);
+
+            categoryOrder.forEach(catId => {
+                const category = state.categories.find(c => c.id == catId);
+                if (!category || !sitesByCat[catId]) return;
+
+                const catTitle = document.createElement('h2');
+                catTitle.textContent = category.name;
+                catTitle.className = 'text-2xl font-bold mb-4 mt-6 first:mt-0';
+                DOMElements.contentGrid.appendChild(catTitle);
+
+                const grid = document.createElement('div');
+                grid.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6';
+                
+                sitesByCat[catId].forEach(site => {
+                    const card = document.createElement('a');
+                    card.href = site.url;
+                    card.target = '_blank';
+                    card.rel = 'noopener noreferrer';
+                    card.className = 'bg-black bg-opacity-40 backdrop-blur-md rounded-lg p-4 flex flex-col items-center text-center hover:bg-opacity-60 transform hover:-translate-y-1 transition-all';
+                    const iconUrl = site.icon || `https://www.google.com/s2/favicons?domain=${site.url}&sz=64`;
+                    card.innerHTML = `
+                        <img src="${iconUrl}" alt="${site.name}" class="w-16 h-16 mb-4 rounded-lg object-contain" onerror="this.onerror=null;this.src='https://placehold.co/64x64/777/eee?text=${site.name.charAt(0)}';">
+                        <h3 class="font-semibold text-lg mb-1 truncate w-full">${site.name}</h3>
+                        <p class="text-gray-400 text-sm flex-grow">${site.description || '&nbsp;'}</p>
+                    `;
+                    grid.appendChild(card);
+                });
+                DOMElements.contentGrid.appendChild(grid);
+            });
+        }
+
+        function renderAdminPanel() {
+            if (!state.isLoggedIn) return;
+            DOMElements.categoriesList.innerHTML = '';
+            state.categories.forEach(cat => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between bg-gray-700 p-2 rounded-md';
+                div.innerHTML = `<span>${cat.name} <span class="text-xs text-gray-400">(${cat.type})</span></span><button data-id="${cat.id}" class="delete-category-btn p-1 text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
+                DOMElements.categoriesList.appendChild(div);
+            });
+
+            DOMElements.sitesListAdmin.innerHTML = '';
+            state.sites.forEach(site => {
+                const cat = state.categories.find(c => c.id == site.categoryId);
+                const div = document.createElement('div');
+                div.className = 'bg-gray-700 p-3 rounded-lg flex items-center justify-between flex-wrap gap-2';
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <img src="${site.icon || `https://www.google.com/s2/favicons?domain=${site.url}&sz=32`}" class="w-8 h-8 rounded object-contain" onerror="this.onerror=null;this.src='https://placehold.co/32x32/777/eee?text=${site.name.charAt(0)}';">
+                        <div><p class="font-semibold">${site.name}</p><p class="text-xs text-gray-400">${cat ? cat.name : 'N/A'}</p></div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a href="${site.url}" target="_blank" class="p-2 text-blue-400 hover:text-blue-300"><i data-lucide="external-link" class="w-4 h-4"></i></a>
+                        <button data-id="${site.id}" class="delete-site-btn p-2 text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>`;
+                DOMElements.sitesListAdmin.appendChild(div);
+            });
+
+            DOMElements.siteCategorySelect.innerHTML = '<option value="">Select a category</option>';
+            state.categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat.id;
+                opt.textContent = `${cat.name} (${cat.type})`;
+                DOMElements.siteCategorySelect.appendChild(opt);
+            });
+            lucide.createIcons();
+        }
+
+        function filterAndRenderSites() {
+            const term = DOMElements.searchInput.value.toLowerCase();
+            let filteredSites = state.sites;
+            if (state.selectedCategory !== 'all') {
+                filteredSites = filteredSites.filter(s => s.categoryId == state.selectedCategory);
+            }
+            if (term) {
+                filteredSites = filteredSites.filter(s =>
+                    (s.name && s.name.toLowerCase().includes(term)) ||
+                    (s.description && s.description.toLowerCase().includes(term)) ||
+                    (s.url && s.url.toLowerCase().includes(term))
+                );
+            }
+            renderSites(filteredSites);
+        }
+
+        function renderAll() {
+            renderCategories();
+            filterAndRenderSites();
+            if (state.isLoggedIn) renderAdminPanel();
+        }
+
+        // --- Event Listeners ---
+        function setupEventListeners() {
+            DOMElements.adminLoginBtn.onclick = () => DOMElements.adminModal.classList.add('active');
+            DOMElements.adminLogoutBtn.onclick = () => {
+                DOMElements.adminModal.classList.remove('active');
+                DOMElements.adminLoginView.style.display = 'block';
+                DOMElements.adminPanelView.style.display = 'none';
+                DOMElements.passwordInput.value = '';
+                state.isLoggedIn = false;
+            };
+            DOMElements.adminModal.onclick = e => { if (e.target === DOMElements.adminModal) DOMElements.adminLogoutBtn.click(); };
+            DOMElements.loginForm.onsubmit = e => {
+                e.preventDefault();
+                if (DOMElements.passwordInput.value === ADMIN_PASSWORD) {
+                    state.isLoggedIn = true;
+                    DOMElements.loginError.textContent = '';
+                    DOMElements.adminLoginView.style.display = 'none';
+                    DOMElements.adminPanelView.style.display = 'block';
+                    renderAdminPanel();
+                } else {
+                    DOMElements.loginError.textContent = 'Incorrect password, please try again.';
+                }
+            };
+            DOMElements.searchInput.oninput = filterAndRenderSites;
+            DOMElements.saveBackgroundBtn.onclick = async () => {
+                const url = DOMElements.backgroundUrlInput.value.trim();
+                if (url) {
+                    try {
+                        await api.post('settings', { backgroundUrl: url });
+                        customAlert('Background saved successfully!');
+                        document.body.style.backgroundImage = `url('${url}')`;
+                    } catch (err) {
+                        customAlert('Failed to save background.');
+                        console.error(err);
+                    }
+                }
+            };
+            DOMElements.addCategoryForm.onsubmit = async (e) => {
+                e.preventDefault();
+                const name = DOMElements.categoryNameInput.value.trim();
+                const type = DOMElements.categoryTypeSelect.value;
+                if (name) {
+                    await api.post('categories', { name, type });
+                    DOMElements.categoryNameInput.value = '';
+                    loadInitialData(); // Reload data
+                }
+            };
+            DOMElements.addSiteForm.onsubmit = async (e) => {
+                e.preventDefault();
+                const site = {
+                    categoryId: DOMElements.siteCategorySelect.value,
+                    name: DOMElements.siteNameInput.value.trim(),
+                    url: DOMElements.siteUrlInput.value.trim(),
+                    icon: DOMElements.siteIconInput.value.trim(),
+                    description: DOMElements.siteDescInput.value.trim(),
+                };
+                if (site.categoryId && site.name && site.url) {
+                    await api.post('sites', site);
+                    DOMElements.addSiteForm.reset();
+                    DOMElements.iconPreview.src = 'https://placehold.co/32x32/777/eee?text=?';
+                    loadInitialData(); // Reload data
+                } else {
+                    customAlert('Please fill in all required fields.');
+                }
+            };
+            DOMElements.categoriesList.onclick = async (e) => {
+                const btn = e.target.closest('.delete-category-btn');
+                if (btn) {
+                    customConfirm('Are you sure you want to delete this category? All associated sites will also be deleted.', async () => {
+                        await api.delete(`categories/${btn.dataset.id}`);
+                        loadInitialData(); // Reload data
+                    });
+                }
+            };
+            DOMElements.sitesListAdmin.onclick = async (e) => {
+                const btn = e.target.closest('.delete-site-btn');
+                if (btn) {
+                    customConfirm('Are you sure you want to delete this site?', async () => {
+                        await api.delete(`sites/${btn.dataset.id}`);
+                        loadInitialData(); // Reload data
+                    });
+                }
+            };
+            DOMElements.siteUrlInput.onblur = () => {
+                const url = DOMElements.siteUrlInput.value.trim();
+                if (url && !DOMElements.siteIconInput.value.trim()) {
+                    try {
+                        const domain = new URL(url).hostname;
+                        const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+                        DOMElements.siteIconInput.value = iconUrl;
+                        DOMElements.iconPreview.src = iconUrl;
+                    } catch (e) { /* ignore invalid urls */ }
+                }
+            };
+            DOMElements.siteIconInput.oninput = () => {
+                DOMElements.iconPreview.src = DOMElements.siteIconInput.value.trim() || 'https://placehold.co/32x32/777/eee?text=?';
+            };
+            DOMElements.menuToggle.onclick = (e) => { e.stopPropagation(); toggleMobileSidebar(); };
+        }
+        
+        function toggleMobileSidebar() {
+            DOMElements.mobileSidebar.classList.toggle('-translate-x-full');
+            DOMElements.mobileSidebarContainer.classList.toggle('hidden');
+        }
+
+        // --- Application Initialization ---
+        async function loadInitialData() {
+            try {
+                const [settings, categories, sites] = await Promise.all([
+                    api.get('settings'),
+                    api.get('categories'),
+                    api.get('sites'),
+                ]);
+                
+                if (settings && settings.value) {
+                    document.body.style.backgroundImage = `url('${settings.value}')`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    document.body.style.backgroundAttachment = 'fixed';
+                    DOMElements.backgroundUrlInput.value = settings.value;
+                }
+                state.categories = categories || [];
+                state.sites = sites || [];
+                renderAll();
+            } catch (error) {
+                console.error("Failed to load initial data:", error);
+                customAlert(`Failed to load data (Status: ${error.status || 'N/A'}). Please check the browser console (F12) for more details and ensure the backend API is running correctly.`);
+            }
+        }
+
+        function init() {
+            lucide.createIcons();
+            setupEventListeners();
+            loadInitialData();
+        }
+
+        init();
+    </script>
+</body>
+</html>
