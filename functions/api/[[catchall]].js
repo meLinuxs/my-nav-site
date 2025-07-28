@@ -1,19 +1,8 @@
 /**
- * Cloudflare Pages Functions - REST API Worker
- * * This worker provides a RESTful API for the navigation website. It interfaces
- * with a Cloudflare D1 database to perform CRUD (Create, Read, Update, Delete)
- * operations for settings, categories, and sites.
- *
- * The worker is bound to a D1 database via the `env.DB` environment variable.
- * Requests are routed based on the URL path, e.g., /api/sites, /api/categories.
+ * Cloudflare Pages Functions - REST API Worker for Navigation Site
+ * This version includes category reordering functionality.
  */
 
-/**
- * Creates a standard JSON response.
- * @param {object | array} data - The data to be sent in the response body.
- * @param {number} [status=200] - The HTTP status code.
- * @returns {Response} A Response object.
- */
 const jsonResponse = (data, status = 200) => {
   return new Response(JSON.stringify(data), {
     status: status,
@@ -21,15 +10,9 @@ const jsonResponse = (data, status = 200) => {
   });
 };
 
-/**
- * Handles incoming API requests and routes them to the appropriate handler.
- * @param {Request} request - The incoming request object.
- * @param {object} env - The environment object, containing bindings like the DB.
- * @returns {Promise<Response>}
- */
 async function handleApiRequest(request, env) {
   const { pathname } = new URL(request.url);
-  const pathParts = pathname.split('/').filter(Boolean); // e.g., ['api', 'sites', '123']
+  const pathParts = pathname.split('/').filter(Boolean);
 
   if (pathParts[0] !== 'api') {
     return jsonResponse({ error: 'Invalid API route' }, 404);
@@ -41,7 +24,6 @@ async function handleApiRequest(request, env) {
   try {
     switch (resource) {
       case 'settings':
-        // --- Settings API Endpoints ---
         if (request.method === 'GET') {
           const stmt = env.DB.prepare('SELECT * FROM settings WHERE key = ?').bind('backgroundUrl');
           const { results } = await stmt.all();
@@ -57,38 +39,57 @@ async function handleApiRequest(request, env) {
         break;
 
       case 'categories':
-        // --- Categories API Endpoints ---
+        // GET /api/categories - 现在会按 displayOrder 排序
         if (request.method === 'GET') {
-          const { results } = await env.DB.prepare('SELECT * FROM categories ORDER BY name').all();
+          const { results } = await env.DB.prepare('SELECT * FROM categories ORDER BY displayOrder, id').all();
           return jsonResponse(results || []);
         }
-        if (request.method === 'POST') {
+        // POST /api/categories - 创建新分类时，自动设置最大的 displayOrder
+        if (request.method === 'POST' && pathParts[2] !== 'order') {
           const { name, type } = await request.json();
-          if (!name || !type) return jsonResponse({ error: 'Missing required fields: name, type' }, 400);
-          const stmt = env.DB.prepare('INSERT INTO categories (name, type) VALUES (?, ?)')
-            .bind(name, type);
+          if (!name || !type) return jsonResponse({ error: 'Missing fields' }, 400);
+          
+          const { results } = await env.DB.prepare('SELECT MAX(displayOrder) as maxOrder FROM categories').all();
+          const newOrder = (results[0].maxOrder || 0) + 1;
+
+          const stmt = env.DB.prepare('INSERT INTO categories (name, type, displayOrder) VALUES (?, ?, ?)')
+            .bind(name, type, newOrder);
           const { meta } = await stmt.run();
           return jsonResponse({ success: true, id: meta.last_row_id }, 201);
         }
+        // DELETE /api/categories/:id
         if (request.method === 'DELETE' && id) {
           await env.DB.prepare('DELETE FROM categories WHERE id = ?').bind(id).run();
           return jsonResponse({ success: true });
         }
+        // 新增: POST /api/categories/order - 接收前端发来的新顺序并更新数据库
+        if (request.method === 'POST' && pathParts[2] === 'order') {
+            const { orderedIds } = await request.json();
+            if (!Array.isArray(orderedIds)) {
+                return jsonResponse({ error: 'Invalid data format, expected orderedIds array' }, 400);
+            }
+
+            const statements = orderedIds.map((id, index) => {
+                return env.DB.prepare('UPDATE categories SET displayOrder = ? WHERE id = ?').bind(index, id);
+            });
+
+            await env.DB.batch(statements);
+            return jsonResponse({ success: true });
+        }
         break;
 
       case 'sites':
-        // --- Sites API Endpoints ---
         if (request.method === 'GET') {
-          const { results } = await env.DB.prepare('SELECT * FROM sites ORDER BY name').all();
+          const { results } = await env.DB.prepare('SELECT * FROM sites').all();
           return jsonResponse(results || []);
         }
         if (request.method === 'POST') {
           const { categoryId, name, url, icon, description } = await request.json();
-          if (!categoryId || !name || !url) return jsonResponse({ error: 'Missing required fields: categoryId, name, url' }, 400);
+          if (!categoryId || !name || !url) return jsonResponse({ error: 'Missing fields' }, 400);
           const stmt = env.DB.prepare('INSERT INTO sites (categoryId, name, url, icon, description) VALUES (?, ?, ?, ?, ?)')
             .bind(categoryId, name, url, icon || '', description || '');
           const { meta } = await stmt.run();
-          return jsonResponse({ success: true, id: meta.last_row_id }, 201);
+          return jsonResponse({ success: true, id: meta.last_row_id });
         }
         if (request.method === 'DELETE' && id) {
           await env.DB.prepare('DELETE FROM sites WHERE id = ?').bind(id).run();
@@ -97,20 +98,17 @@ async function handleApiRequest(request, env) {
         break;
 
       default:
-        // --- Fallback for unknown resources ---
         return jsonResponse({ error: 'Resource not found' }, 404);
     }
     
-    // If method is not supported for the resource
-    return jsonResponse({ error: `Method ${request.method} not allowed for resource ${resource}` }, 405);
+    return jsonResponse({ error: `Method ${request.method} not allowed` }, 405);
 
   } catch (e) {
     console.error('API Error:', e);
-    return jsonResponse({ error: 'An internal server error occurred', details: e.message }, 500);
+    return jsonResponse({ error: 'Internal Server Error', details: e.message }, 500);
   }
 }
 
-// --- Cloudflare Pages Function Entry Point ---
 export const onRequest = async ({ request, env }) => {
   return await handleApiRequest(request, env);
 };
