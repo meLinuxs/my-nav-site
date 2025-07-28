@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- NEW: Import SortableJS for drag-and-drop -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <style>
         /* Base font styles */
@@ -27,7 +26,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Allows clicks to pass through the canvas */
+            pointer-events: none;
             z-index: 9999;
         }
 
@@ -35,7 +34,7 @@
         .light-mode {
             --bg-color: #f3f4f6;
             --text-color: #1f2937;
-            --ui-bg: rgba(255, 255, 255, 0.4);
+            --ui-bg: rgba(255, 255, 255, 0.4); /* Your custom opacity */
             --ui-border: #e5e7eb;
             --input-bg: #e5e7eb;
             --input-text: #111827;
@@ -48,7 +47,7 @@
         }
 
         body.light-mode { background-color: var(--bg-color); color: var(--text-color); }
-        .light-mode .bg-black.bg-opacity-30 { background-color: var(--ui-bg); border-bottom: 1px solid var(--ui-border); }
+        .light-mode .bg-black.bg-opacity-10 { background-color: var(--ui-bg); border-bottom: 1px solid var(--ui-border); } /* Updated for your opacity */
         .light-mode .bg-gray-700 { background-color: var(--input-bg); }
         .light-mode .text-gray-400 { color: var(--text-muted); }
         .light-mode input, .light-mode select, .light-mode textarea { color: var(--input-text); }
@@ -58,13 +57,22 @@
         .light-mode .bg-black.bg-opacity-40 { background-color: var(--card-bg); }
         .light-mode .hover\:bg-opacity-60:hover { background-color: var(--card-hover-bg); }
         
-        /* NEW: Styles for drag-and-drop functionality */
+        /* Drag-and-drop styles */
         .sortable-ghost { opacity: 0.4; background: #4a5568; }
         .sortable-chosen { background: #2d3748; }
         .drag-handle { cursor: grab; }
         .drag-handle:active { cursor: grabbing; }
         .light-mode .sortable-ghost { background: #cbd5e1; }
         .light-mode .sortable-chosen { background: #e5e7eb; }
+
+        /* Styles for collapsible desktop sidebar */
+        #app-container.sidebar-collapsed #sidebar {
+            width: 0;
+            padding-left: 0;
+            padding-right: 0;
+            overflow: hidden;
+            transform: translateX(-100%);
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
@@ -72,7 +80,7 @@
     <canvas id="sakura-canvas"></canvas>
 
     <div id="app-container" class="flex h-screen">
-        <aside id="sidebar" class="bg-black bg-opacity-10 backdrop-blur-md w-64 p-6 hidden md:flex flex-col flex-shrink-0">
+        <aside id="sidebar" class="bg-black bg-opacity-10 backdrop-blur-md w-64 p-6 hidden md:flex flex-col flex-shrink-0 transition-all duration-300">
             <h1 class="text-2xl font-bold mb-8 text-center" data-i18n-key="navMenu">Navigation Menu</h1>
             <nav id="sidebar-nav" class="flex-grow space-y-2"></nav>
         </aside>
@@ -80,7 +88,10 @@
         <main class="flex-1 flex flex-col overflow-hidden">
             <header class="bg-black bg-opacity-10 backdrop-blur-md shadow-lg p-4 flex items-center justify-between">
                 <div class="flex items-center">
-                    <button id="menu-toggle" class="md:hidden mr-4 p-2 rounded-md hover:bg-gray-700"><i data-lucide="menu"></i></button>
+                    <button id="mobile-menu-toggle" class="md:hidden mr-4 p-2 rounded-md hover:bg-gray-700"><i data-lucide="menu"></i></button>
+                    <button id="desktop-sidebar-toggle" class="hidden md:flex mr-4 p-2 rounded-md hover:bg-gray-700">
+                        <i data-lucide="panel-left-close" id="desktop-sidebar-icon"></i>
+                    </button>
                     <div class="relative w-full max-w-xs">
                         <input type="text" id="search-input" data-i18n-key="searchPlaceholder" placeholder="Search sites..." class="bg-gray-700 border border-gray-600 rounded-full py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <div class="absolute inset-y-0 right-0 flex items-center pr-3"><i data-lucide="search" class="text-gray-400"></i></div>
@@ -102,6 +113,9 @@
 
     <div id="mobile-sidebar-container" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleMobileSidebar()"></div>
     <div id="mobile-sidebar" class="fixed top-0 left-0 h-full w-64 bg-gray-800 shadow-lg p-6 transform -translate-x-full transition-transform duration-300 ease-in-out z-50">
+         <button id="mobile-sidebar-close" class="absolute top-4 right-4 p-2 rounded-md hover:bg-gray-700">
+            <i data-lucide="x"></i>
+         </button>
          <h1 class="text-2xl font-bold mb-8 text-center" data-i18n-key="navMenu">Navigation Menu</h1>
          <nav id="mobile-sidebar-nav" class="flex-grow space-y-2"></nav>
     </div>
@@ -190,6 +204,7 @@
         const DOMElements = {
             html: document.documentElement,
             body: document.body,
+            appContainer: document.getElementById('app-container'),
             sidebarNav: document.getElementById('sidebar-nav'),
             mobileSidebarNav: document.getElementById('mobile-sidebar-nav'),
             topbarNav: document.getElementById('topbar-nav'),
@@ -220,15 +235,18 @@
             siteDescInput: document.getElementById('site-desc-input'),
             sitesListAdmin: document.getElementById('sites-list-admin'),
             iconPreview: document.getElementById('icon-preview'),
-            menuToggle: document.getElementById('menu-toggle'),
+            mobileMenuToggle: document.getElementById('mobile-menu-toggle'),
+            desktopSidebarToggle: document.getElementById('desktop-sidebar-toggle'),
+            desktopSidebarIcon: document.getElementById('desktop-sidebar-icon'),
             mobileSidebar: document.getElementById('mobile-sidebar'),
+            mobileSidebarClose: document.getElementById('mobile-sidebar-close'),
             mobileSidebarContainer: document.getElementById('mobile-sidebar-container'),
             genericModal: document.getElementById('generic-modal'),
             genericModalText: document.getElementById('generic-modal-text'),
             genericModalButtons: document.getElementById('generic-modal-buttons'),
         };
 
-        // --- API Client with Enhanced Error Handling ---
+        // --- API Client ---
         const api = {
             get: (endpoint) => fetch(`${window.location.origin}/api/${endpoint}`).then(async res => {
                 if (res.ok) return res.json();
@@ -251,7 +269,7 @@
             }),
         };
         
-        // --- UI Functions (Language, Theme, Modals) ---
+        // --- UI Functions ---
         function setLanguage(lang) {
             state.currentLanguage = lang;
             localStorage.setItem('lang', lang);
@@ -490,12 +508,9 @@
             DOMElements.saveOrderBtn.onclick = async () => {
                 const sidebarList = document.getElementById('sortable-sidebar');
                 const topbarList = document.getElementById('sortable-topbar');
-
                 const sidebarIds = sidebarList ? Array.from(sidebarList.children).map(el => el.dataset.id) : [];
                 const topbarIds = topbarList ? Array.from(topbarList.children).map(el => el.dataset.id) : [];
-                
                 const orderedIds = [...sidebarIds, ...topbarIds];
-
                 try {
                     await api.post('categories/order', { orderedIds });
                     customAlert('orderSaved');
@@ -511,10 +526,25 @@
                 if (url && !DOMElements.siteIconInput.value.trim()) { try { const domain = new URL(url).hostname; const iconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`; DOMElements.siteIconInput.value = iconUrl; DOMElements.iconPreview.src = iconUrl; } catch (e) { /* ignore invalid urls */ } }
             };
             DOMElements.siteIconInput.oninput = () => { DOMElements.iconPreview.src = DOMElements.siteIconInput.value.trim() || 'https://placehold.co/32x32/777/eee?text=?'; };
-            DOMElements.menuToggle.onclick = (e) => { e.stopPropagation(); toggleMobileSidebar(); };
+            
+            DOMElements.mobileMenuToggle.onclick = (e) => { e.stopPropagation(); toggleMobileSidebar(); };
+            DOMElements.mobileSidebarClose.onclick = toggleMobileSidebar;
+            DOMElements.desktopSidebarToggle.onclick = toggleDesktopSidebar;
         }
         
-        function toggleMobileSidebar() { DOMElements.mobileSidebar.classList.toggle('-translate-x-full'); DOMElements.mobileSidebarContainer.classList.toggle('hidden'); }
+        // --- Sidebar Toggle Functions ---
+        function toggleMobileSidebar() {
+            DOMElements.mobileSidebar.classList.toggle('-translate-x-full');
+            DOMElements.mobileSidebarContainer.classList.toggle('hidden');
+        }
+
+        function toggleDesktopSidebar() {
+            const isCollapsed = DOMElements.appContainer.classList.toggle('sidebar-collapsed');
+            localStorage.setItem('desktopSidebarState', isCollapsed ? 'collapsed' : 'open');
+            const iconName = isCollapsed ? 'panel-right-close' : 'panel-left-close';
+            DOMElements.desktopSidebarIcon.outerHTML = `<i data-lucide="${iconName}" id="desktop-sidebar-icon"></i>`;
+            lucide.createIcons();
+        }
 
         // --- Sakura Effect ---
         function initSakuraEffect() {
@@ -622,6 +652,15 @@
         async function init() {
             lucide.createIcons();
             setupEventListeners();
+            
+            const savedDesktopSidebarState = localStorage.getItem('desktopSidebarState');
+            if (savedDesktopSidebarState === 'collapsed') {
+                DOMElements.appContainer.classList.add('sidebar-collapsed');
+                const iconName = 'panel-right-close';
+                DOMElements.desktopSidebarIcon.outerHTML = `<i data-lucide="${iconName}" id="desktop-sidebar-icon"></i>`;
+                lucide.createIcons();
+            }
+
             await loadInitialData();
             
             const savedTheme = localStorage.getItem('theme');
