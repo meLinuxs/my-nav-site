@@ -90,8 +90,10 @@ ALTER TABLE categories ADD COLUMN displayOrder INTEGER;
 
 3.绑定D1数据库，名称为`DB`,重新部署令数据库生效。
 
-4.管理员密码默认`password123`，可变量`ADMIN_PASSWORD`修改或到index.html文件第225行修改。
+4.管理员密码默认`password123`，可变量`ADMIN_PASSWORD`修改或到index.html文件第198行修改。
 
 5.添加网站可以到`https://favicon.im/zh/`获取网站图标。
+
+6.缺点是在管理面板编辑保存时有时需一段时间缓存加载。
 
 
