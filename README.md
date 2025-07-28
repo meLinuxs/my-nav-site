@@ -94,4 +94,4 @@ ALTER TABLE categories ADD COLUMN displayOrder INTEGER;
 
 5.添加网站可以到`https://favicon.im/zh/`获取网站图标。
 
-更多内容请关注我的博客：https://blog.marvel.qzz.io
+
