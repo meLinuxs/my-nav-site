@@ -1,6 +1,6 @@
 # cloudflare部署
 
-1.创建D1数据库，到控制台依次输入命令并执行
+1.创建D1数据库`my-nav-site`，到控制台依次输入命令并逐一执行
 
 ```
 CREATE TABLE settings (
@@ -32,3 +32,9 @@ INSERT INTO settings (key, value) VALUES ('backgroundUrl', 'https://img.8888.vvv
 ```
 ALTER TABLE categories ADD COLUMN displayOrder INTEGER;
 ```
+
+2.fork项目，到cloudflare创建pages连接Git仓库，选择构建目录`public`，点击部署。
+
+3.绑定D1数据库，名称为`DB`,重新部署令数据库生效。
+
+4.管理员密码默认`password123`，可变量修改或到index.html文件第行修改。
