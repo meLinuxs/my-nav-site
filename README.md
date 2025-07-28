@@ -1,7 +1,5 @@
 # 关于项目
 
-<img src="https://img.8888.vvvv.ee/file/图片/1753689856557.png" alt="屏幕截图 2025-07-28 160035.png" width=100% />
-
 示例站点：https://nas.ikun.pp.ua
 
 
