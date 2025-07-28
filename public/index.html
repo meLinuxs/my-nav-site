@@ -41,7 +41,7 @@
             --hover-bg: #d1d5db;
             --modal-bg: #ffffff;
             --panel-bg: #f9fafb;
-            --card-bg: rgba(255, 255, 255, 0.6);
+            --card-bg: rgba(255, 255, 255, 0.4);
             --card-hover-bg: rgba(255, 255, 255, 0.8);
             --text-muted: #6b7280;
         }
@@ -378,7 +378,7 @@
                     card.href = site.url;
                     card.target = '_blank';
                     card.rel = 'noopener noreferrer';
-                    card.className = 'bg-black bg-opacity-40 backdrop-blur-md rounded-lg p-4 flex flex-col items-center text-center hover:bg-opacity-60 transform hover:-translate-y-1 transition-all';
+                    card.className = 'bg-black bg-opacity-20 backdrop-blur-md rounded-lg p-3 flex flex-col items-center text-center hover:bg-opacity-60 transform hover:-translate-y-1 transition-all';
                     const iconUrl = site.icon || `https://www.google.com/s2/favicons?domain=${site.url}&sz=64`;
                     card.innerHTML = `<img src="${iconUrl}" alt="${site.name}" class="w-16 h-16 mb-4 rounded-lg object-contain" onerror="this.onerror=null;this.src='https://placehold.co/64x64/777/eee?text=${site.name.charAt(0)}';"><h3 class="font-semibold text-lg mb-1 truncate w-full">${site.name}</h3><p class="text-gray-400 text-sm flex-grow">${site.description || '&nbsp;'}</p>`;
                     grid.appendChild(card);
