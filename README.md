@@ -80,7 +80,7 @@ CREATE TABLE sites (
 );
 ```
 ```
-INSERT INTO settings (key, value) VALUES ('backgroundUrl', 'https://img.8888.vvvv.ee/file/图片/1753684532153.gif');
+INSERT INTO settings (key, value) VALUES ('backgroundUrl', 'https://iili.io/FSa7FDB.gif');
 ```
 ```
 ALTER TABLE categories ADD COLUMN displayOrder INTEGER;
