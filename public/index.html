@@ -70,24 +70,23 @@
             background: var(--ui-bg, rgba(255, 255, 255, 0.1));
             backdrop-filter: blur(20px);
             border: 1px solid var(--ui-border, rgba(255, 255, 255, 0.2));
-            border-radius: 50px;
             padding: 8px 12px 8px 8px;
             display: flex;
             align-items: center;
             gap: 12px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-            cursor: pointer;
             position: fixed;
             bottom: 5px;
             left: 5px;
             z-index: 1000;
-            max-width: 300px;
+            height: 56px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 300px;
+            border-radius: 50px;
         }
-        .music-capsule:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-            background: var(--hover-bg, rgba(255, 255, 255, 0.15));
+        .music-capsule.collapsed {
+            width: 56px;
+            padding: 8px;
         }
         .album-cover {
             width: 40px;
@@ -100,18 +99,42 @@
             overflow: hidden;
             flex-shrink: 0;
             position: relative;
+            cursor: pointer;
         }
-        .album-cover img {
+        #albumArtContainer {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #albumArtContainer img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 50%;
         }
         .album-cover .music-icon {
             color: var(--text-color, white);
             font-size: 18px;
         }
-        .music-info { flex: 1; overflow: hidden; }
+        .music-info-wrapper {
+            flex-grow: 1;
+            min-width: 0;
+            opacity: 1;
+            transition: opacity 0.2s ease 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .music-capsule.collapsed .music-info-wrapper {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.1s ease;
+        }
+        .music-info { 
+            flex: 1; 
+            overflow: hidden; 
+        }
         .song-title {
             color: var(--text-color, white);
             font-size: 14px;
@@ -128,11 +151,11 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .play-pause-btn {
+        .play-pause-btn, .collapse-btn, .playlist-btn, .shuffle-btn {
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.2);
             border: none;
             display: flex;
             align-items: center;
@@ -141,15 +164,44 @@
             transition: all 0.2s ease;
             flex-shrink: 0;
         }
-        .play-pause-btn:hover {
-            background: rgba(0, 0, 0, 0.2);
+        .play-pause-btn:hover, .collapse-btn:hover, .playlist-btn:hover, .shuffle-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
             transform: scale(1.1);
         }
-        .play-pause-btn svg {
+        .play-pause-btn svg, .collapse-btn svg, .playlist-btn svg, .shuffle-btn svg {
             width: 14px;
             height: 14px;
+            stroke: var(--text-color, white);
+            stroke-width: 1.5;
+        }
+        .play-pause-btn svg {
             fill: var(--text-color, white);
         }
+        
+        #playPauseBtnCollapsed {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.4);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .music-capsule.collapsed .album-cover:hover #playPauseBtnCollapsed {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .music-capsule.collapsed .controls {
+            display: none;
+        }
+
+        .music-capsule:not(.collapsed) #playPauseBtnCollapsed {
+            display: none;
+        }
+
         .progress-bar {
             position: absolute;
             bottom: 0;
@@ -159,6 +211,13 @@
             background: rgba(0, 0, 0, 0.1);
             border-radius: 0 0 50px 50px;
             overflow: hidden;
+            opacity: 1;
+            transition: opacity 0.2s ease 0.1s;
+        }
+        .music-capsule.collapsed .progress-bar {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.1s ease;
         }
         .progress-fill {
             height: 100%;
@@ -191,69 +250,24 @@
             max-height: 220px; 
             overflow-y: auto; 
         }
-        /* Custom scrollbar for music list */
-        .music-list::-webkit-scrollbar {
-            width: 6px;
-        }
-        .music-list::-webkit-scrollbar-track {
-            background: transparent;
-            margin: 10px 0;
-        }
-        .music-list::-webkit-scrollbar-thumb {
-            background-color: rgba(255, 255, 255, 0.3);
-            border-radius: 3px;
-        }
-        .light-mode .music-list::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.3);
-        }
-
-        .music-list.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        .music-item {
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .music-list::-webkit-scrollbar { width: 6px; }
+        .music-list::-webkit-scrollbar-track { background: transparent; margin: 10px 0; }
+        .music-list::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.3); border-radius: 3px; }
+        .light-mode .music-list::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.3); }
+        .music-list.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .music-item { padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px; }
         .music-item:hover { background: rgba(0, 0, 0, 0.1); }
         .music-item.active { background: rgba(0, 0, 0, 0.2); }
-        .music-item-title {
-            color: var(--text-color, white);
-            font-size: 13px;
-            font-weight: 500;
-        }
-        .music-item-artist {
-            color: var(--text-muted, rgba(255, 255, 255, 0.7));
-            font-size: 11px;
-        }
+        .music-item-title { color: var(--text-color, white); font-size: 13px; font-weight: 500; }
+        .music-item-artist { color: var(--text-muted, rgba(255, 255, 255, 0.7)); font-size: 11px; }
+        
         @media (max-width: 480px) {
-            .music-capsule {
-                left: 5px;
-                bottom: 5px;
-                max-width: 250px;
-            }
-            .music-list {
-                left: 5px;
-                bottom: 50px;
-                max-width: 250px;
-            }
+            .music-capsule { left: 5px; bottom: 5px; max-width: 250px; }
+            .music-list { left: 5px; bottom: 50px; max-width: 250px; }
         }
         /* --- End of Music Capsule Styles --- */
 
-        /* Styles for collapsible desktop sidebar */
-        #app-container.sidebar-collapsed #sidebar {
-            width: 0;
-            padding-left: 0;
-            padding-right: 0;
-            overflow: hidden;
-            transform: translateX(-100%);
-        }
+        #app-container.sidebar-collapsed #sidebar { width: 0; padding-left: 0; padding-right: 0; overflow: hidden; transform: translateX(-100%); }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
@@ -369,17 +383,38 @@
     <!-- Music Capsule Component -->
     <div class="music-capsule" id="musicCapsule">
         <div class="album-cover" id="albumCover">
-            <div class="music-icon">♪</div>
+            <div id="albumArtContainer">
+                 <div class="music-icon">♪</div>
+            </div>
+            <button class="play-pause-btn" id="playPauseBtnCollapsed">
+                <svg viewBox="0 0 24 24">
+                    <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.68L9.54 5.98C8.87 5.55 8 6.03 8 6.82z"/>
+                </svg>
+            </button>
         </div>
-        <div class="music-info">
-            <div class="song-title" id="songTitle">选择音乐</div>
-            <div class="artist-name" id="artistName">点击播放</div>
+        <div class="music-info-wrapper">
+            <div class="music-info" id="musicInfo">
+                <div class="song-title" id="songTitle">选择音乐</div>
+                <div class="artist-name" id="artistName">点击播放</div>
+            </div>
+             <div class="controls flex items-center gap-2">
+                <button class="shuffle-btn" id="shuffleBtn">
+                    <svg class="shuffle-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="16 16 21 16 21 21"></polyline><line x1="4" y1="4" x2="11" y2="11"></line></svg>
+                    <svg class="repeat-icon hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+                </button>
+                <button class="playlist-btn" id="playlistBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                </button>
+                <button class="play-pause-btn" id="playPauseBtnExpanded">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.68L9.54 5.98C8.87 5.55 8 6.03 8 6.82z"/>
+                    </svg>
+                </button>
+                <button class="collapse-btn" id="collapseBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+            </div>
         </div>
-        <button class="play-pause-btn" id="playPauseBtn">
-            <svg viewBox="0 0 24 24">
-                <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.68L9.54 5.98C8.87 5.55 8 6.03 8 6.82z"/>
-            </svg>
-        </button>
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
@@ -461,15 +496,15 @@
         class MusicCapsule {
             constructor() {
                 this.isPlaying = false;
+                this.isCollapsed = true; 
                 this.currentTrack = 0;
                 this.audio = null;
                 this.showList = false;
                 this.playlist = [];
+                this.playMode = 'random'; // 'random' or 'sequential'
                 
-                // --- Meting API Configuration ---
-                // 您可以在这里更改为您自己的歌单ID
-                this.playlistId = '2250011882'; // 这是一个示例歌单 (飙升榜)
-                this.server = 'netease'; // 'netease', 'tencent', 'kugou', 'xiami'
+                this.playlistId = '2250011882'; 
+                this.server = 'netease';
                 
                 this.initializeElements();
                 this.bindEvents();
@@ -483,8 +518,8 @@
                     const data = await response.json();
                     
                     this.playlist = data.map(song => ({
-                        title: song.title, // CORRECTED KEY
-                        artist: song.author, // CORRECTED KEY
+                        title: song.title,
+                        artist: song.author,
                         src: song.url,
                         cover: song.pic
                     }));
@@ -507,28 +542,89 @@
             initializeElements() {
                 this.capsule = document.getElementById('musicCapsule');
                 this.albumCover = document.getElementById('albumCover');
+                this.albumArtContainer = document.getElementById('albumArtContainer');
                 this.songTitle = document.getElementById('songTitle');
                 this.artistName = document.getElementById('artistName');
-                this.playPauseBtn = document.getElementById('playPauseBtn');
+                this.playPauseBtnExpanded = document.getElementById('playPauseBtnExpanded');
+                this.playPauseBtnCollapsed = document.getElementById('playPauseBtnCollapsed');
+                this.collapseBtn = document.getElementById('collapseBtn');
+                this.playlistBtn = document.getElementById('playlistBtn');
+                this.shuffleBtn = document.getElementById('shuffleBtn');
                 this.progressFill = document.getElementById('progressFill');
                 this.musicList = document.getElementById('musicList');
+                this.musicInfo = document.getElementById('musicInfo');
+                
+                this.capsule.classList.toggle('collapsed', this.isCollapsed);
+                this.updateShuffleIcon();
             }
             
             bindEvents() {
-                this.playPauseBtn.addEventListener('click', (e) => {
+                this.playPauseBtnExpanded.addEventListener('click', (e) => {
                     e.stopPropagation();
                     this.togglePlayPause();
                 });
+                this.playPauseBtnCollapsed.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (this.isCollapsed) {
+                        this.expand();
+                    }
+                    this.togglePlayPause();
+                });
                 
-                this.capsule.addEventListener('click', () => {
+                this.albumCover.addEventListener('click', (e) => {
+                    if (e.target.closest('.play-pause-btn')) return;
+                    if (!this.isCollapsed) return;
+                    this.expand();
+                });
+                
+                this.collapseBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.collapse();
+                });
+
+                this.playlistBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     this.toggleMusicList();
                 });
                 
-                document.addEventListener('click', (e) => {
+                this.shuffleBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.togglePlayMode();
+                });
+
+                 document.addEventListener('click', (e) => {
                     if (!this.capsule.contains(e.target) && !this.musicList.contains(e.target)) {
                         this.hideMusicList();
                     }
                 });
+            }
+            
+            togglePlayMode() {
+                this.playMode = this.playMode === 'random' ? 'sequential' : 'random';
+                this.updateShuffleIcon();
+            }
+            
+            updateShuffleIcon() {
+                const shuffleIcon = this.shuffleBtn.querySelector('.shuffle-icon');
+                const repeatIcon = this.shuffleBtn.querySelector('.repeat-icon');
+                if (this.playMode === 'random') {
+                    shuffleIcon.classList.remove('hidden');
+                    repeatIcon.classList.add('hidden');
+                } else {
+                    shuffleIcon.classList.add('hidden');
+                    repeatIcon.classList.remove('hidden');
+                }
+            }
+
+            expand() {
+                this.isCollapsed = false;
+                this.capsule.classList.remove('collapsed');
+            }
+
+            collapse() {
+                this.isCollapsed = true;
+                this.capsule.classList.add('collapsed');
+                this.hideMusicList();
             }
             
             initializePlaylist() {
@@ -562,9 +658,9 @@
                 this.artistName.textContent = track.artist;
                 
                 if (track.cover) {
-                    this.albumCover.innerHTML = `<img src="${track.cover}" alt="Album Cover">`;
+                    this.albumArtContainer.innerHTML = `<img src="${track.cover}" alt="Album Cover">`;
                 } else {
-                    this.albumCover.innerHTML = '<div class="music-icon">♪</div>';
+                    this.albumArtContainer.innerHTML = '<div class="music-icon">♪</div>';
                 }
                 
                 this.musicList.querySelectorAll('.music-item').forEach((item, i) => {
@@ -641,20 +737,32 @@
             }
             
             updatePlayButton(isPlay) {
-                const svg = this.playPauseBtn.querySelector('svg path');
-                if (isPlay) {
-                    svg.setAttribute('d', 'M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.68L9.54 5.98C8.87 5.55 8 6.03 8 6.82z');
-                } else {
-                    svg.setAttribute('d', 'M8 19c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2v10c0 1.1.9 2 2 2zm6-12v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2z');
-                }
+                const playIcon = 'M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.68L9.54 5.98C8.87 5.55 8 6.03 8 6.82z';
+                const pauseIcon = 'M8 19c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2v10c0 1.1.9 2 2 2zm6-12v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2z';
+                const icon = isPlay ? playIcon : pauseIcon;
+
+                this.playPauseBtnExpanded.querySelector('svg path').setAttribute('d', icon);
+                this.playPauseBtnCollapsed.querySelector('svg path').setAttribute('d', icon);
             }
             
             nextTrack() {
-                this.currentTrack = (this.currentTrack + 1) % this.playlist.length;
-                this.selectTrack(this.currentTrack, this.isPlaying);
+                let nextIndex;
+                if (this.playMode === 'sequential') {
+                    nextIndex = (this.currentTrack + 1) % this.playlist.length;
+                } else { // random
+                    if (this.playlist.length <= 1) {
+                        nextIndex = 0;
+                    } else {
+                        do {
+                            nextIndex = Math.floor(Math.random() * this.playlist.length);
+                        } while (nextIndex === this.currentTrack);
+                    }
+                }
+                this.selectTrack(nextIndex, this.isPlaying);
             }
             
             toggleMusicList() {
+                if(this.isCollapsed) return;
                 if (this.playlist.length > 0) {
                     this.showList = !this.showList;
                     this.musicList.classList.toggle('show', this.showList);
