@@ -477,7 +477,7 @@
             }
 
             async fetchPlaylist() {
-                const apiUrl = `https://api.i-meto.com/meting/api?server=${this.server}&type=playlist&id=${this.playlistId}`;
+                const apiUrl = `https://music.ikun.pp.ua/api?server=${this.server}&type=playlist&id=${this.playlistId}`;
                 try {
                     const response = await fetch(apiUrl);
                     const data = await response.json();
