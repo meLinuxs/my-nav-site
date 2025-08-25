@@ -80,7 +80,7 @@
             cursor: pointer;
             position: fixed;
             bottom: 5px;
-            left: 5px; /* Changed from right to left */
+            left: 5px;
             z-index: 1000;
             max-width: 300px;
         }
@@ -176,7 +176,7 @@
         .music-list {
             position: fixed;
             bottom: 65px;
-            left: 30px; /* Changed from right to left */
+            left: 30px;
             background: var(--ui-bg, rgba(255, 255, 255, 0.1));
             backdrop-filter: blur(20px);
             border: 1px solid var(--ui-border, rgba(255, 255, 255, 0.2));
@@ -234,12 +234,12 @@
         }
         @media (max-width: 480px) {
             .music-capsule {
-                left: 5px; /* Changed from right to left */
+                left: 5px;
                 bottom: 5px;
                 max-width: 250px;
             }
             .music-list {
-                left: 15px; /* Changed from right to left */
+                left: 15px;
                 bottom: 50px;
                 max-width: 250px;
             }
@@ -464,33 +464,44 @@
                 this.currentTrack = 0;
                 this.audio = null;
                 this.showList = false;
+                this.playlist = [];
                 
-                // Sample playlist (replace with your actual music files)
-                this.playlist = [
-                    {
-                        title: "Deadman",
-                        artist: "蔡徐坤",
-                        src: "https://music.ikuner.tech/api?server=netease&type=url&id=2708984802",
-                        cover: "https://p2.music.126.net/wqyd40jQQLVTY9nynOwETg==/109951171031632866.jpg"
-                    },
-                    {
-                        title: "游京 DJ(版)",
-                        artist: "lucky小阳",
-                        src: "https://imge.ssss.bio/file/1754923445466_游京__DJ版__-_lucky小阳.flac",
-                        cover: "https://p2.music.126.net/BxHM898KCLTUGqclBt9lBw==/109951170632366305.jpg"
-                    },
-                    {
-                        title: "飘雪",
-                        artist: "陈慧娴",
-                        src: "https://imge.ssss.bio/file/1754923532772_飘雪_-_陈慧娴.mp3",
-                        cover: "https://p1.music.126.net/lM-GxhQhNncu_nA9MGQHlQ==/109951169338473286.jpg"
-                    }
-                ];
+                // --- Meting API Configuration ---
+                // 您可以在这里更改为您自己的歌单ID
+                this.playlistId = '24381616'; // 这是一个示例歌单 (飙升榜)
+                this.server = 'netease'; // 'netease', 'tencent', 'kugou', 'xiami'
                 
                 this.initializeElements();
                 this.bindEvents();
-                this.initializePlaylist();
-                this.selectTrack(0, false); // Select first track but don't auto-load
+                this.fetchPlaylist();
+            }
+
+            async fetchPlaylist() {
+                const apiUrl = `https://api.i-meto.com/meting/api?server=${this.server}&type=playlist&id=${this.playlistId}`;
+                try {
+                    const response = await fetch(apiUrl);
+                    const data = await response.json();
+                    
+                    this.playlist = data.map(song => ({
+                        title: song.title, // CORRECTED KEY
+                        artist: song.author, // CORRECTED KEY
+                        src: song.url,
+                        cover: song.pic
+                    }));
+
+                    if (this.playlist.length > 0) {
+                        this.initializePlaylist();
+                        this.selectTrack(0, false);
+                    } else {
+                        this.songTitle.textContent = "歌单为空";
+                        this.artistName.textContent = "请检查ID";
+                    }
+
+                } catch (error) {
+                    console.error("无法从Meting API获取播放列表:", error);
+                    this.songTitle.textContent = "加载失败";
+                    this.artistName.textContent = "请检查网络";
+                }
             }
             
             initializeElements() {
@@ -513,7 +524,6 @@
                     this.toggleMusicList();
                 });
                 
-                // Close list when clicking outside
                 document.addEventListener('click', (e) => {
                     if (!this.capsule.contains(e.target) && !this.musicList.contains(e.target)) {
                         this.hideMusicList();
@@ -543,6 +553,8 @@
             }
             
             selectTrack(index, autoPlay) {
+                if (index < 0 || index >= this.playlist.length) return;
+
                 this.currentTrack = index;
                 const track = this.playlist[index];
                 
@@ -591,13 +603,14 @@
             }
             
             togglePlayPause() {
+                if (this.playlist.length === 0) {
+                    customAlert('noAudioFile');
+                    return;
+                }
                 if (!this.audio) {
-                    // If no audio is loaded yet (e.g., on first click), load the current track.
                     const currentTrackData = this.playlist[this.currentTrack];
                     if (currentTrackData && currentTrackData.src) {
                         this.loadTrack(currentTrackData.src, true);
-                    } else {
-                        customAlert('noAudioFile');
                     }
                     return;
                 }
@@ -630,10 +643,8 @@
             updatePlayButton(isPlay) {
                 const svg = this.playPauseBtn.querySelector('svg path');
                 if (isPlay) {
-                    // Play icon
                     svg.setAttribute('d', 'M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.68L9.54 5.98C8.87 5.55 8 6.03 8 6.82z');
                 } else {
-                    // Pause icon
                     svg.setAttribute('d', 'M8 19c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2v10c0 1.1.9 2 2 2zm6-12v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2z');
                 }
             }
@@ -644,8 +655,10 @@
             }
             
             toggleMusicList() {
-                this.showList = !this.showList;
-                this.musicList.classList.toggle('show', this.showList);
+                if (this.playlist.length > 0) {
+                    this.showList = !this.showList;
+                    this.musicList.classList.toggle('show', this.showList);
+                }
             }
             
             hideMusicList() {
