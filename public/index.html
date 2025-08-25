@@ -34,16 +34,16 @@
         .light-mode {
             --bg-color: #f3f4f6;
             --text-color: #1f2937;
-            --ui-bg: rgba(255, 255, 255, 0.4); /* Your custom opacity */
+            --text-muted: #6b7280;
+            --ui-bg: rgba(255, 255, 255, 0.4);
             --ui-border: #e5e7eb;
             --input-bg: #e5e7eb;
             --input-text: #111827;
             --hover-bg: #d1d5db;
             --modal-bg: #ffffff;
             --panel-bg: #f9fafb;
-            --card-bg: rgba(255, 255, 255, 0.4); /* Your custom card opacity */
+            --card-bg: rgba(255, 255, 255, 0.4);
             --card-hover-bg: rgba(255, 255, 255, 0.8);
-            --text-muted: #6b7280;
         }
 
         body.light-mode { background-color: var(--bg-color); color: var(--text-color); }
@@ -54,7 +54,7 @@
         .light-mode .hover\:bg-gray-700:hover { background-color: var(--hover-bg); }
         .light-mode .bg-gray-800 { background-color: var(--modal-bg); }
         .light-mode .bg-gray-900 { background-color: var(--panel-bg); }
-        .light-mode .bg-black.bg-opacity-20 { background-color: var(--card-bg); } /* Match your card opacity */
+        .light-mode .bg-black.bg-opacity-20 { background-color: var(--card-bg); }
         .light-mode .hover\:bg-opacity-60:hover { background-color: var(--card-hover-bg); }
 
         /* Drag-and-drop styles */
@@ -64,6 +64,187 @@
         .drag-handle:active { cursor: grabbing; }
         .light-mode .sortable-ghost { background: #cbd5e1; }
         .light-mode .sortable-chosen { background: #e5e7eb; }
+
+        /* --- Music Capsule Styles --- */
+        .music-capsule {
+            background: var(--ui-bg, rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--ui-border, rgba(255, 255, 255, 0.2));
+            border-radius: 50px;
+            padding: 8px 12px 8px 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            cursor: pointer;
+            position: fixed;
+            bottom: 30px;
+            left: 30px; /* Changed from right to left */
+            z-index: 1000;
+            max-width: 300px;
+        }
+        .music-capsule:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            background: var(--hover-bg, rgba(255, 255, 255, 0.15));
+        }
+        .album-cover {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .album-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .album-cover .music-icon {
+            color: var(--text-color, white);
+            font-size: 18px;
+        }
+        .music-info { flex: 1; overflow: hidden; }
+        .song-title {
+            color: var(--text-color, white);
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+        .artist-name {
+            color: var(--text-muted, rgba(255, 255, 255, 0.8));
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .play-pause-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.1);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        .play-pause-btn:hover {
+            background: rgba(0, 0, 0, 0.2);
+            transform: scale(1.1);
+        }
+        .play-pause-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: var(--text-color, white);
+        }
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 50px 50px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .music-capsule.playing .album-cover {
+            animation: rotate 10s linear infinite;
+        }
+        .music-list {
+            position: fixed;
+            bottom: 90px;
+            left: 30px; /* Changed from right to left */
+            background: var(--ui-bg, rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--ui-border, rgba(255, 255, 255, 0.2));
+            border-radius: 12px;
+            padding: 12px;
+            max-width: 300px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            z-index: 999;
+            max-height: 220px; 
+            overflow-y: auto; 
+        }
+        /* Custom scrollbar for music list */
+        .music-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .music-list::-webkit-scrollbar-track {
+            background: transparent;
+            margin: 10px 0;
+        }
+        .music-list::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+        .light-mode .music-list::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .music-list.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .music-item {
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .music-item:hover { background: rgba(0, 0, 0, 0.1); }
+        .music-item.active { background: rgba(0, 0, 0, 0.2); }
+        .music-item-title {
+            color: var(--text-color, white);
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .music-item-artist {
+            color: var(--text-muted, rgba(255, 255, 255, 0.7));
+            font-size: 11px;
+        }
+        @media (max-width: 480px) {
+            .music-capsule {
+                left: 15px; /* Changed from right to left */
+                bottom: 15px;
+                max-width: 250px;
+            }
+            .music-list {
+                left: 15px; /* Changed from right to left */
+                bottom: 75px;
+                max-width: 250px;
+            }
+        }
+        /* --- End of Music Capsule Styles --- */
 
         /* Styles for collapsible desktop sidebar */
         #app-container.sidebar-collapsed #sidebar {
@@ -80,7 +261,7 @@
 
     <div id="app-container" class="flex h-screen">
         <aside id="sidebar" class="bg-black bg-opacity-10 backdrop-blur-md w-64 p-6 hidden md:flex flex-col flex-shrink-0 transition-all duration-300">
-            <h1 class="text-2xl font-bold mb-8 text-center" data-i18n-key="navMenu">Navigation Menu</h1>
+            <h1 class="text-2xl font-bold mb-8 text-center" data-i18n-key="navMenu">导航菜单</h1>
             <nav id="sidebar-nav" class="flex-grow space-y-2"></nav>
         </aside>
 
@@ -92,7 +273,7 @@
                         <i data-lucide="panel-left-close" id="desktop-sidebar-icon"></i>
                     </button>
                     <div class="relative w-full max-w-xs">
-                        <input type="text" id="search-input" data-i18n-key="searchPlaceholder" placeholder="Search sites..." class="bg-gray-700 border border-gray-600 rounded-full py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="search-input" data-i18n-key="searchPlaceholder" placeholder="搜索网站..." class="bg-gray-700 border border-gray-600 rounded-full py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <div class="absolute inset-y-0 right-0 flex items-center pr-3"><i data-lucide="search" class="text-gray-400"></i></div>
                     </div>
                 </div>
@@ -112,64 +293,64 @@
 
     <div id="mobile-sidebar-container" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleMobileSidebar()"></div>
     <div id="mobile-sidebar" class="fixed top-0 left-0 h-full w-64 bg-gray-800 shadow-lg p-6 transform -translate-x-full transition-transform duration-300 ease-in-out z-50">
-         <button id="mobile-sidebar-close" class="absolute top-4 right-4 p-2 rounded-md hover:bg-gray-700">
-            <i data-lucide="x"></i>
-         </button>
-         <h1 class="text-2xl font-bold mb-8 text-center" data-i18n-key="navMenu">Navigation Menu</h1>
-         <nav id="mobile-sidebar-nav" class="flex-grow space-y-2"></nav>
+       <button id="mobile-sidebar-close" class="absolute top-4 right-4 p-2 rounded-md hover:bg-gray-700">
+         <i data-lucide="x"></i>
+       </button>
+       <h1 class="text-2xl font-bold mb-8 text-center" data-i18n-key="navMenu">导航菜单</h1>
+       <nav id="mobile-sidebar-nav" class="flex-grow space-y-2"></nav>
     </div>
 
     <div id="admin-modal" class="modal fixed inset-0 bg-black bg-opacity-70 items-center justify-center p-4 z-50">
         <div id="admin-login-view" class="bg-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-6 text-center" data-i18n-key="adminLogin">Admin Login</h2>
+            <h2 class="text-2xl font-bold mb-6 text-center" data-i18n-key="adminLogin">管理员登录</h2>
             <form id="login-form">
-                <input type="password" id="password-input" data-i18n-key="passwordPlaceholder" placeholder="Enter admin password" class="w-full bg-gray-700 border border-gray-600 rounded-md p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 rounded-md p-3 font-semibold transition-colors" data-i18n-key="login">Login</button>
+                <input type="password" id="password-input" data-i18n-key="passwordPlaceholder" placeholder="请输入管理密码" class="w-full bg-gray-700 border border-gray-600 rounded-md p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 rounded-md p-3 font-semibold transition-colors" data-i18n-key="login">登录</button>
             </form>
             <p id="login-error" class="text-red-500 text-center mt-4"></p>
         </div>
         <div id="admin-panel-view" class="hidden bg-gray-800 rounded-lg p-4 md:p-8 w-full max-w-6xl h-full max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-bold" data-i18n-key="adminPanel">Admin Panel</h2>
+                <h2 class="text-3xl font-bold" data-i18n-key="adminPanel">管理面板</h2>
                 <button id="admin-logout-btn" class="p-2 rounded-md hover:bg-gray-700"><i data-lucide="x"></i></button>
             </div>
             <div class="flex-grow overflow-y-auto pr-4">
                 <div class="bg-gray-900 p-6 rounded-lg mb-6">
-                    <h3 class="text-xl font-semibold mb-4" data-i18n-key="globalSettings">Global Settings</h3>
+                    <h3 class="text-xl font-semibold mb-4" data-i18n-key="globalSettings">全局设置</h3>
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <input type="text" id="background-url-input" data-i18n-key="backgroundPlaceholder" placeholder="Enter background image URL" class="w-full flex-grow bg-gray-700 border border-gray-600 rounded-md p-2">
-                        <button id="save-background-btn" class="w-full sm:w-auto flex-shrink-0 bg-green-600 hover:bg-green-700 rounded-md py-2 px-4 font-semibold" data-i18n-key="saveBackground">Save Background</button>
+                        <input type="text" id="background-url-input" data-i18n-key="backgroundPlaceholder" placeholder="输入背景图片 URL" class="w-full flex-grow bg-gray-700 border border-gray-600 rounded-md p-2">
+                        <button id="save-background-btn" class="w-full sm:w-auto flex-shrink-0 bg-green-600 hover:bg-green-700 rounded-md py-2 px-4 font-semibold" data-i18n-key="saveBackground">保存背景</button>
                     </div>
                 </div>
                 <div class="bg-gray-900 p-6 rounded-lg mb-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-semibold" data-i18n-key="categoryManagement">Category Management</h3>
-                        <button id="save-order-btn" class="bg-purple-600 hover:bg-purple-700 rounded-md py-1 px-3 text-sm font-semibold hidden" data-i18n-key="saveOrder">Save Order</button>
+                        <h3 class="text-xl font-semibold" data-i18n-key="categoryManagement">分类管理</h3>
+                        <button id="save-order-btn" class="bg-purple-600 hover:bg-purple-700 rounded-md py-1 px-3 text-sm font-semibold hidden" data-i18n-key="saveOrder">保存顺序</button>
                     </div>
                     <form id="add-category-form" class="flex flex-col sm:flex-row gap-2 mb-4">
-                        <input type="text" id="category-name-input" data-i18n-key="newCategoryPlaceholder" placeholder="New category name" class="w-full flex-grow bg-gray-700 border border-gray-600 rounded-md p-2" required>
+                        <input type="text" id="category-name-input" data-i18n-key="newCategoryPlaceholder" placeholder="新分类名称" class="w-full flex-grow bg-gray-700 border border-gray-600 rounded-md p-2" required>
                         <select id="category-type-select" class="w-full sm:w-auto bg-gray-700 border border-gray-600 rounded-md p-2">
-                            <option value="sidebar" data-i18n-key="sidebar">Sidebar</option>
-                            <option value="topbar" data-i18n-key="topbar">Topbar</option>
+                            <option value="sidebar" data-i18n-key="sidebar">侧边栏</option>
+                            <option value="topbar" data-i18n-key="topbar">顶部栏</option>
                         </select>
                         <button type="submit" class="w-full sm:w-auto flex-shrink-0 bg-blue-600 hover:bg-blue-700 p-2 rounded-md"><i data-lucide="plus"></i></button>
                     </form>
                     <div id="categories-list" class="space-y-2"></div>
                 </div>
                 <div class="bg-gray-900 p-6 rounded-lg">
-                    <h3 id="site-form-title" class="text-xl font-semibold mb-4" data-i18n-key="siteManagement">Site Management</h3>
+                    <h3 id="site-form-title" class="text-xl font-semibold mb-4" data-i18n-key="siteManagement">网站管理</h3>
                     <form id="site-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end mb-6 p-4 bg-gray-800 rounded-lg">
-                        <select id="site-category-select" class="bg-gray-700 border border-gray-600 rounded-md p-2" required><option value="" data-i18n-key="selectCategory">Select a category</option></select>
-                        <input type="text" id="site-name-input" data-i18n-key="siteNamePlaceholder" placeholder="Site Name" class="bg-gray-700 rounded-md p-2" required>
-                        <input type="url" id="site-url-input" data-i18n-key="siteUrlPlaceholder" placeholder="Site URL" class="bg-gray-700 rounded-md p-2" required>
+                        <select id="site-category-select" class="bg-gray-700 border border-gray-600 rounded-md p-2" required><option value="" data-i18n-key="selectCategory">选择一个分类</option></select>
+                        <input type="text" id="site-name-input" data-i18n-key="siteNamePlaceholder" placeholder="网站名称" class="bg-gray-700 rounded-md p-2" required>
+                        <input type="url" id="site-url-input" data-i18n-key="siteUrlPlaceholder" placeholder="网站 URL" class="bg-gray-700 rounded-md p-2" required>
                         <div class="flex items-center space-x-2">
-                           <input type="text" id="site-icon-input" data-i18n-key="iconUrlPlaceholder" placeholder="Icon URL (optional)" class="flex-grow bg-gray-700 rounded-md p-2">
+                           <input type="text" id="site-icon-input" data-i18n-key="iconUrlPlaceholder" placeholder="图标 URL (可选)" class="flex-grow bg-gray-700 rounded-md p-2">
                            <img id="icon-preview" src="https://placehold.co/32x32/777/eee?text=?" alt="Icon Preview" class="icon-preview">
                         </div>
-                        <textarea id="site-desc-input" data-i18n-key="siteDescPlaceholder" placeholder="Site Description" class="bg-gray-700 rounded-md p-2 md:col-span-2 lg:col-span-3" rows="2"></textarea>
+                        <textarea id="site-desc-input" data-i18n-key="siteDescPlaceholder" placeholder="网站简介" class="bg-gray-700 rounded-md p-2 md:col-span-2 lg:col-span-3" rows="2"></textarea>
                         <div class="flex items-center gap-2 md:col-start-4">
-                            <button type="button" id="cancel-edit-btn" class="w-full bg-gray-600 hover:bg-gray-700 rounded-md py-2 px-4 font-semibold hidden" data-i18n-key="cancel">Cancel</button>
-                            <button type="submit" id="site-submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 rounded-md py-2 px-4 font-semibold" data-i18n-key="addSite">Add Site</button>
+                            <button type="button" id="cancel-edit-btn" class="w-full bg-gray-600 hover:bg-gray-700 rounded-md py-2 px-4 font-semibold hidden" data-i18n-key="cancel">取消</button>
+                            <button type="submit" id="site-submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 rounded-md py-2 px-4 font-semibold" data-i18n-key="addSite">添加网站</button>
                         </div>
                     </form>
                     <div id="sites-list-admin" class="space-y-4"></div>
@@ -184,15 +365,40 @@
             <div id="generic-modal-buttons" class="flex justify-center space-x-4"></div>
         </div>
     </div>
+    
+    <!-- Music Capsule Component -->
+    <div class="music-capsule" id="musicCapsule">
+        <div class="album-cover" id="albumCover">
+            <div class="music-icon">♪</div>
+        </div>
+        <div class="music-info">
+            <div class="song-title" id="songTitle">选择音乐</div>
+            <div class="artist-name" id="artistName">点击播放</div>
+        </div>
+        <button class="play-pause-btn" id="playPauseBtn">
+            <svg viewBox="0 0 24 24">
+                <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.68L9.54 5.98C8.87 5.55 8 6.03 8 6.82z"/>
+            </svg>
+        </button>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <!-- Music List -->
+    <div class="music-list" id="musicList">
+        <!-- Playlist items will be generated by JavaScript -->
+    </div>
+
 
     <script type="module">
         // --- i18n Translations ---
         const translations = {
             en: {
-                navMenu: "Navigation Menu", searchPlaceholder: "Search sites...", adminLogin: "Admin Login", passwordPlaceholder: "Enter admin password", login: "Login", adminPanel: "Admin Panel", globalSettings: "Global Settings", backgroundPlaceholder: "Enter background image URL", saveBackground: "Save Background", categoryManagement: "Category Management", newCategoryPlaceholder: "New category name", sidebar: "Sidebar", topbar: "Topbar", siteManagement: "Site Management", selectCategory: "Select a category", siteNamePlaceholder: "Site Name", siteUrlPlaceholder: "Site URL", iconUrlPlaceholder: "Icon URL (optional)", siteDescPlaceholder: "Site Description", addSite: "Add Site", allSites: "All Sites", noSitesFound: "No sites found.", passwordIncorrect: "Incorrect password, please try again.", backgroundSaved: "Background saved successfully!", backgroundSaveFailed: "Failed to save background.", fillRequiredFields: "Please fill in all required fields.", confirmCategoryDeletion: "Are you sure you want to delete this category? All associated sites will also be deleted.", confirmSiteDeletion: "Are you sure you want to delete this site?", dataLoadFailed: "Failed to load data. Please check the browser console (F12) for more details and ensure the backend API is running correctly.", modalOk: "OK", modalCancel: "Cancel", modalConfirm: "Confirm", saveOrder: "Save Order", orderSaved: "Order saved successfully!", editSite: "Edit Site", saveChanges: "Save Changes", siteUpdated: "Site updated successfully!"
+                navMenu: "Navigation Menu", searchPlaceholder: "Search sites...", adminLogin: "Admin Login", passwordPlaceholder: "Enter admin password", login: "Login", adminPanel: "Admin Panel", globalSettings: "Global Settings", backgroundPlaceholder: "Enter background image URL", saveBackground: "Save Background", categoryManagement: "Category Management", newCategoryPlaceholder: "New category name", sidebar: "Sidebar", topbar: "Topbar", siteManagement: "Site Management", selectCategory: "Select a category", siteNamePlaceholder: "Site Name", siteUrlPlaceholder: "Site URL", iconUrlPlaceholder: "Icon URL (optional)", siteDescPlaceholder: "Site Description", addSite: "Add Site", allSites: "All Sites", noSitesFound: "No sites found.", passwordIncorrect: "Incorrect password, please try again.", backgroundSaved: "Background saved successfully!", backgroundSaveFailed: "Failed to save background.", fillRequiredFields: "Please fill in all required fields.", confirmCategoryDeletion: "Are you sure you want to delete this category? All associated sites will also be deleted.", confirmSiteDeletion: "Are you sure you want to delete this site?", dataLoadFailed: "Failed to load data. Please check the browser console (F12) for more details and ensure the backend API is running correctly.", modalOk: "OK", modalCancel: "Cancel", modalConfirm: "Confirm", saveOrder: "Save Order", orderSaved: "Order saved successfully!", editSite: "Edit Site", saveChanges: "Save Changes", siteUpdated: "Site updated successfully!", noAudioFile: "Please add an audio file to the playlist first."
             },
             zh: {
-                navMenu: "导航菜单", searchPlaceholder: "搜索网站...", adminLogin: "管理员登录", passwordPlaceholder: "请输入管理密码", login: "登录", adminPanel: "管理面板", globalSettings: "全局设置", backgroundPlaceholder: "输入背景图片 URL", saveBackground: "保存背景", categoryManagement: "分类管理", newCategoryPlaceholder: "新分类名称", sidebar: "侧边栏", topbar: "顶部栏", siteManagement: "网站管理", selectCategory: "选择一个分类", siteNamePlaceholder: "网站名称", siteUrlPlaceholder: "网站 URL", iconUrlPlaceholder: "图标 URL (可选)", siteDescPlaceholder: "网站简介", addSite: "添加网站", allSites: "所有网站", noSitesFound: "没有找到网站。", passwordIncorrect: "密码错误，请重试。", backgroundSaved: "背景已保存！", backgroundSaveFailed: "背景保存失败。", fillRequiredFields: "请填写所有必填字段。", confirmCategoryDeletion: "确定要删除这个分类吗？其下的所有网站也会被一并删除。", confirmSiteDeletion: "确定要删除这个网站吗？", dataLoadFailed: "数据加载失败。请按 F12 查看浏览器控制台获取更多信息，并确保后端 API 运行正常。", modalOk: "好的", modalCancel: "取消", modalConfirm: "确定", saveOrder: "保存顺序", orderSaved: "顺序已保存！", editSite: "编辑网站", saveChanges: "保存更改", siteUpdated: "网站已成功更新！"
+                navMenu: "导航菜单", searchPlaceholder: "搜索网站...", adminLogin: "管理员登录", passwordPlaceholder: "请输入管理密码", login: "登录", adminPanel: "管理面板", globalSettings: "全局设置", backgroundPlaceholder: "输入背景图片 URL", saveBackground: "保存背景", categoryManagement: "分类管理", newCategoryPlaceholder: "新分类名称", sidebar: "侧边栏", topbar: "顶部栏", siteManagement: "网站管理", selectCategory: "选择一个分类", siteNamePlaceholder: "网站名称", siteUrlPlaceholder: "网站 URL", iconUrlPlaceholder: "图标 URL (可选)", siteDescPlaceholder: "网站简介", addSite: "添加网站", allSites: "所有网站", noSitesFound: "没有找到网站。", passwordIncorrect: "密码错误，请重试。", backgroundSaved: "背景已保存！", backgroundSaveFailed: "背景保存失败。", fillRequiredFields: "请填写所有必填字段。", confirmCategoryDeletion: "确定要删除这个分类吗？其下的所有网站也会被一并删除。", confirmSiteDeletion: "确定要删除这个网站吗？", dataLoadFailed: "数据加载失败。请按 F12 查看浏览器控制台获取更多信息，并确保后端 API 运行正常。", modalOk: "好的", modalCancel: "取消", modalConfirm: "确定", saveOrder: "保存顺序", orderSaved: "顺序已保存！", editSite: "编辑网站", saveChanges: "保存更改", siteUpdated: "网站已成功更新！", noAudioFile: "请先添加音频文件到播放列表"
             }
         };
 
@@ -250,6 +456,204 @@
             genericModalText: document.getElementById('generic-modal-text'),
             genericModalButtons: document.getElementById('generic-modal-buttons'),
         };
+
+        // --- Music Capsule Class ---
+        class MusicCapsule {
+            constructor() {
+                this.isPlaying = false;
+                this.currentTrack = 0;
+                this.audio = null;
+                this.showList = false;
+                
+                // Sample playlist (replace with your actual music files)
+                this.playlist = [
+                    {
+                        title: "Deadman",
+                        artist: "蔡徐坤",
+                        src: "https://music.ikuner.tech/api?server=netease&type=url&id=2708984802",
+                        cover: "https://p2.music.126.net/wqyd40jQQLVTY9nynOwETg==/109951171031632866.jpg"
+                    },
+                    {
+                        title: "游京 DJ(版)",
+                        artist: "lucky小阳",
+                        src: "https://imge.ssss.bio/file/1754923445466_游京__DJ版__-_lucky小阳.flac",
+                        cover: "https://p2.music.126.net/BxHM898KCLTUGqclBt9lBw==/109951170632366305.jpg"
+                    },
+                    {
+                        title: "飘雪",
+                        artist: "陈慧娴",
+                        src: "https://imge.ssss.bio/file/1754923532772_飘雪_-_陈慧娴.mp3",
+                        cover: "https://p1.music.126.net/lM-GxhQhNncu_nA9MGQHlQ==/109951169338473286.jpg"
+                    }
+                ];
+                
+                this.initializeElements();
+                this.bindEvents();
+                this.initializePlaylist();
+                this.selectTrack(0, false); // Select first track but don't auto-load
+            }
+            
+            initializeElements() {
+                this.capsule = document.getElementById('musicCapsule');
+                this.albumCover = document.getElementById('albumCover');
+                this.songTitle = document.getElementById('songTitle');
+                this.artistName = document.getElementById('artistName');
+                this.playPauseBtn = document.getElementById('playPauseBtn');
+                this.progressFill = document.getElementById('progressFill');
+                this.musicList = document.getElementById('musicList');
+            }
+            
+            bindEvents() {
+                this.playPauseBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.togglePlayPause();
+                });
+                
+                this.capsule.addEventListener('click', () => {
+                    this.toggleMusicList();
+                });
+                
+                // Close list when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!this.capsule.contains(e.target) && !this.musicList.contains(e.target)) {
+                        this.hideMusicList();
+                    }
+                });
+            }
+            
+            initializePlaylist() {
+                const listContainer = this.musicList;
+                listContainer.innerHTML = '';
+                
+                this.playlist.forEach((track, index) => {
+                    const item = document.createElement('div');
+                    item.className = `music-item ${index === this.currentTrack ? 'active' : ''}`;
+                    item.innerHTML = `
+                        <div>
+                            <div class="music-item-title">${track.title}</div>
+                            <div class="music-item-artist">${track.artist}</div>
+                        </div>
+                    `;
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.selectTrack(index, true);
+                    });
+                    listContainer.appendChild(item);
+                });
+            }
+            
+            selectTrack(index, autoPlay) {
+                this.currentTrack = index;
+                const track = this.playlist[index];
+                
+                this.songTitle.textContent = track.title;
+                this.artistName.textContent = track.artist;
+                
+                if (track.cover) {
+                    this.albumCover.innerHTML = `<img src="${track.cover}" alt="Album Cover">`;
+                } else {
+                    this.albumCover.innerHTML = '<div class="music-icon">♪</div>';
+                }
+                
+                this.musicList.querySelectorAll('.music-item').forEach((item, i) => {
+                    item.classList.toggle('active', i === index);
+                });
+                
+                this.hideMusicList();
+                
+                if (track.src) {
+                    this.loadTrack(track.src, autoPlay);
+                }
+            }
+            
+            loadTrack(src, autoPlay = false) {
+                if (this.audio) {
+                    this.pause();
+                    this.audio = null;
+                }
+                
+                this.audio = new Audio(src);
+                
+                this.audio.addEventListener('timeupdate', () => {
+                    if (this.audio.duration) {
+                        const progress = (this.audio.currentTime / this.audio.duration) * 100;
+                        this.progressFill.style.width = `${progress}%`;
+                    }
+                });
+                
+                this.audio.addEventListener('ended', () => {
+                    this.nextTrack();
+                });
+
+                if (autoPlay) {
+                    this.play();
+                }
+            }
+            
+            togglePlayPause() {
+                if (!this.audio) {
+                    // If no audio is loaded yet (e.g., on first click), load the current track.
+                    const currentTrackData = this.playlist[this.currentTrack];
+                    if (currentTrackData && currentTrackData.src) {
+                        this.loadTrack(currentTrackData.src, true);
+                    } else {
+                        customAlert('noAudioFile');
+                    }
+                    return;
+                }
+                
+                if (this.isPlaying) {
+                    this.pause();
+                } else {
+                    this.play();
+                }
+            }
+            
+            play() {
+                if (this.audio) {
+                    this.audio.play().catch(error => console.error("Audio play failed:", error));
+                    this.isPlaying = true;
+                    this.capsule.classList.add('playing');
+                    this.updatePlayButton(false);
+                }
+            }
+            
+            pause() {
+                if (this.audio) {
+                    this.audio.pause();
+                    this.isPlaying = false;
+                    this.capsule.classList.remove('playing');
+                    this.updatePlayButton(true);
+                }
+            }
+            
+            updatePlayButton(isPlay) {
+                const svg = this.playPauseBtn.querySelector('svg path');
+                if (isPlay) {
+                    // Play icon
+                    svg.setAttribute('d', 'M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.68L9.54 5.98C8.87 5.55 8 6.03 8 6.82z');
+                } else {
+                    // Pause icon
+                    svg.setAttribute('d', 'M8 19c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2v10c0 1.1.9 2 2 2zm6-12v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2z');
+                }
+            }
+            
+            nextTrack() {
+                this.currentTrack = (this.currentTrack + 1) % this.playlist.length;
+                this.selectTrack(this.currentTrack, this.isPlaying);
+            }
+            
+            toggleMusicList() {
+                this.showList = !this.showList;
+                this.musicList.classList.toggle('show', this.showList);
+            }
+            
+            hideMusicList() {
+                this.showList = false;
+                this.musicList.classList.remove('show');
+            }
+        }
+
 
         // --- API Client ---
         const api = {
@@ -508,8 +912,6 @@
                     state.isLoggedIn = true;
                     DOMElements.loginError.textContent = '';
                     DOMElements.adminLoginView.style.display = 'none';
-                    // FIX: Changed 'block' to 'flex' to match the element's Tailwind classes
-                    // This restores the flexbox layout, allowing the inner container to scroll.
                     DOMElements.adminPanelView.style.display = 'flex';
                     renderAdminPanel();
                 } else {
@@ -745,6 +1147,9 @@
             setLanguage(savedLang || browserLang);
 
             initSakuraEffect();
+
+            // Initialize the music capsule
+            new MusicCapsule();
         }
 
         init();
