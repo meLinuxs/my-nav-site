@@ -517,21 +517,79 @@
                     const response = await fetch(apiUrl);
                     const data = await response.json();
         
-                    this.playlist = data.map(song => ({
-                        title: song.title,
-                        artist: song.author,
-                        src: song.url,
-                        cover: song.pic
+                    // 为每首歌获取真实的播放链接
+                    const songsWithUrls = await Promise.all(data.map(async (song) => {
+                        try {
+                // 提取歌曲ID
+                            let songId = null;
+                
+                // 从URL中提取ID
+                            if (song.url && song.url.includes('id=')) {
+                                const urlMatch = song.url.match(/id=(\d+)/);
+                                if (urlMatch) {
+                                    songId = urlMatch[1];
+                                }
+                            }
+                
+                            // 如果URL中没有ID，尝试使用歌曲的ID字段
+                            if (!songId && song.id) {
+                                songId = song.id;
+                            }
+                
+                // 用歌曲ID从Wyy API获取真实的播放链接
+                            let actualUrl = '';
+                            if (songId) {
+                                try {
+                                    const urlResponse = await fetch(`https://wyy-api-three.vercel.app/song/url?id=${songId}&quality=320k`);
+                                    const urlData = await urlResponse.json();
+                        
+                                    // 从返回的JSON中提取url字段
+                                    if (urlData && urlData.url) {
+                                        actualUrl = urlData.url;
+                                    } else {
+                                        console.warn(`歌曲ID ${songId} 没有找到播放链接`);
+                                        actualUrl = song.url || '';
+                                    }
+                                } catch (urlError) {
+                                    console.warn(`获取歌曲ID ${songId} 的播放链接失败:`, urlError);
+                                    actualUrl = song.url || '';
+                                }
+                            } else {
+                    // 如果没有ID，使用原始URL
+                                actualUrl = song.url || '';
+                            }
+                
+                            return {
+                                title: song.title,
+                                artist: song.author,
+                                src: actualUrl,
+                                cover: song.pic,
+                                id: songId
+                            };
+                        } catch (error) {
+                            console.warn('处理歌曲时出错:', error);
+                            return {
+                                title: song.title,
+                                artist: song.author,
+                                src: song.url || '',
+                                cover: song.pic,
+                                id: song.id
+                            };
+                        }
                     }));
-
+        
+        // 过滤掉没有播放链接的歌曲
+                    this.playlist = songsWithUrls.filter(song => song.src && song.src.trim() !== '');
+        
                     if (this.playlist.length > 0) {
                         this.initializePlaylist();
                         this.selectTrack(0, false);
+                        console.log(`成功加载 ${this.playlist.length} 首歌曲`);
                     } else {
-                        this.songTitle.textContent = "歌单为空";
-                        this.artistName.textContent = "请检查ID";
+                        this.songTitle.textContent = "无可用歌曲";
+                        this.artistName.textContent = "请检查API";
                     }
-
+        
                 } catch (error) {
                     console.error("无法从Meting API获取播放列表:", error);
                     this.songTitle.textContent = "加载失败";
