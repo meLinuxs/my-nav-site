@@ -308,7 +308,7 @@
     <div id="mobile-sidebar-container" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleMobileSidebar()"></div>
     <div id="mobile-sidebar" class="fixed top-0 left-0 h-full w-64 bg-gray-800 shadow-lg p-6 transform -translate-x-full transition-transform duration-300 ease-in-out z-50">
        <button id="mobile-sidebar-close" class="absolute top-4 right-4 p-2 rounded-md hover:bg-gray-700">
-         <i data-lucide="x"></i>
+           <i data-lucide="x"></i>
        </button>
        <h1 class="text-2xl font-bold mb-8 text-center" data-i18n-key="navMenu">导航菜单</h1>
        <nav id="mobile-sidebar-nav" class="flex-grow space-y-2"></nav>
@@ -331,9 +331,27 @@
             <div class="flex-grow overflow-y-auto pr-4">
                 <div class="bg-gray-900 p-6 rounded-lg mb-6">
                     <h3 class="text-xl font-semibold mb-4" data-i18n-key="globalSettings">全局设置</h3>
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <input type="text" id="background-url-input" data-i18n-key="backgroundPlaceholder" placeholder="输入背景图片 URL" class="w-full flex-grow bg-gray-700 border border-gray-600 rounded-md p-2">
-                        <button id="save-background-btn" class="w-full sm:w-auto flex-shrink-0 bg-green-600 hover:bg-green-700 rounded-md py-2 px-4 font-semibold" data-i18n-key="saveBackground">保存背景</button>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="background-url-input" class="block text-sm font-medium text-gray-400 mb-1" data-i18n-key="backgroundLabel">背景图片 URL</label>
+                            <input type="text" id="background-url-input" data-i18n-key="backgroundPlaceholder" placeholder="输入背景图片 URL" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2">
+                        </div>
+                        <div>
+                            <label for="music-server-input" class="block text-sm font-medium text-gray-400 mb-1" data-i18n-key="musicPlatformLabel">音乐平台</label>
+                            <select id="music-server-input" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2">
+                                <option value="netease">网易云音乐</option>
+                                <option value="tencent">QQ音乐</option>
+                                <option value="kugou">酷狗音乐</option>
+                                <option value="kuwo">酷我音乐</option>
+                                <option value="xiami">虾米音乐</option>
+                                <option value="baidu">百度音乐</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="playlist-id-input" class="block text-sm font-medium text-gray-400 mb-1" data-i18n-key="playlistIdLabel">歌单 ID</label>
+                            <input type="text" id="playlist-id-input" data-i18n-key="playlistIdPlaceholder" placeholder="输入歌单 ID" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2">
+                        </div>
+                        <button id="save-settings-btn" class="w-full bg-green-600 hover:bg-green-700 rounded-md py-2 px-4 font-semibold" data-i18n-key="saveSettings">保存设置</button>
                     </div>
                 </div>
                 <div class="bg-gray-900 p-6 rounded-lg mb-6">
@@ -384,7 +402,7 @@
     <div class="music-capsule" id="musicCapsule">
         <div class="album-cover" id="albumCover">
             <div id="albumArtContainer">
-                 <div class="music-icon">♪</div>
+                   <div class="music-icon">♪</div>
             </div>
             <button class="play-pause-btn" id="playPauseBtnCollapsed">
                 <svg viewBox="0 0 24 24">
@@ -430,10 +448,10 @@
         // --- i18n Translations ---
         const translations = {
             en: {
-                navMenu: "Navigation Menu", searchPlaceholder: "Search sites...", adminLogin: "Admin Login", passwordPlaceholder: "Enter admin password", login: "Login", adminPanel: "Admin Panel", globalSettings: "Global Settings", backgroundPlaceholder: "Enter background image URL", saveBackground: "Save Background", categoryManagement: "Category Management", newCategoryPlaceholder: "New category name", sidebar: "Sidebar", topbar: "Topbar", siteManagement: "Site Management", selectCategory: "Select a category", siteNamePlaceholder: "Site Name", siteUrlPlaceholder: "Site URL", iconUrlPlaceholder: "Icon URL (optional)", siteDescPlaceholder: "Site Description", addSite: "Add Site", allSites: "All Sites", noSitesFound: "No sites found.", passwordIncorrect: "Incorrect password, please try again.", backgroundSaved: "Background saved successfully!", backgroundSaveFailed: "Failed to save background.", fillRequiredFields: "Please fill in all required fields.", confirmCategoryDeletion: "Are you sure you want to delete this category? All associated sites will also be deleted.", confirmSiteDeletion: "Are you sure you want to delete this site?", dataLoadFailed: "Failed to load data. Please check the browser console (F12) for more details and ensure the backend API is running correctly.", modalOk: "OK", modalCancel: "Cancel", modalConfirm: "Confirm", saveOrder: "Save Order", orderSaved: "Order saved successfully!", editSite: "Edit Site", saveChanges: "Save Changes", siteUpdated: "Site updated successfully!", noAudioFile: "Please add an audio file to the playlist first."
+                navMenu: "Navigation Menu", searchPlaceholder: "Search sites...", adminLogin: "Admin Login", passwordPlaceholder: "Enter admin password", login: "Login", adminPanel: "Admin Panel", globalSettings: "Global Settings", backgroundPlaceholder: "Enter background image URL", saveBackground: "Save Background", categoryManagement: "Category Management", newCategoryPlaceholder: "New category name", sidebar: "Sidebar", topbar: "Topbar", siteManagement: "Site Management", selectCategory: "Select a category", siteNamePlaceholder: "Site Name", siteUrlPlaceholder: "Site URL", iconUrlPlaceholder: "Icon URL (optional)", siteDescPlaceholder: "Site Description", addSite: "Add Site", allSites: "All Sites", noSitesFound: "No sites found.", passwordIncorrect: "Incorrect password, please try again.", backgroundSaved: "Background saved successfully!", backgroundSaveFailed: "Failed to save background.", fillRequiredFields: "Please fill in all required fields.", confirmCategoryDeletion: "Are you sure you want to delete this category? All associated sites will also be deleted.", confirmSiteDeletion: "Are you sure you want to delete this site?", dataLoadFailed: "Failed to load data. Please check the browser console (F12) for more details and ensure the backend API is running correctly.", modalOk: "OK", modalCancel: "Cancel", modalConfirm: "Confirm", saveOrder: "Save Order", orderSaved: "Order saved successfully!", editSite: "Edit Site", saveChanges: "Save Changes", siteUpdated: "Site updated successfully!", noAudioFile: "Please add an audio file to the playlist first.", saveSettings: "Save Settings", settingsSaved: "Settings saved successfully!", backgroundLabel: "Background Image URL", musicPlatformLabel: "Music Platform", playlistIdLabel: "Playlist ID", playlistIdPlaceholder: "Enter Playlist ID"
             },
             zh: {
-                navMenu: "导航菜单", searchPlaceholder: "搜索网站...", adminLogin: "管理员登录", passwordPlaceholder: "请输入管理密码", login: "登录", adminPanel: "管理面板", globalSettings: "全局设置", backgroundPlaceholder: "输入背景图片 URL", saveBackground: "保存背景", categoryManagement: "分类管理", newCategoryPlaceholder: "新分类名称", sidebar: "侧边栏", topbar: "顶部栏", siteManagement: "网站管理", selectCategory: "选择一个分类", siteNamePlaceholder: "网站名称", siteUrlPlaceholder: "网站 URL", iconUrlPlaceholder: "图标 URL (可选)", siteDescPlaceholder: "网站简介", addSite: "添加网站", allSites: "所有网站", noSitesFound: "没有找到网站。", passwordIncorrect: "密码错误，请重试。", backgroundSaved: "背景已保存！", backgroundSaveFailed: "背景保存失败。", fillRequiredFields: "请填写所有必填字段。", confirmCategoryDeletion: "确定要删除这个分类吗？其下的所有网站也会被一并删除。", confirmSiteDeletion: "确定要删除这个网站吗？", dataLoadFailed: "数据加载失败。请按 F12 查看浏览器控制台获取更多信息，并确保后端 API 运行正常。", modalOk: "好的", modalCancel: "取消", modalConfirm: "确定", saveOrder: "保存顺序", orderSaved: "顺序已保存！", editSite: "编辑网站", saveChanges: "保存更改", siteUpdated: "网站已成功更新！", noAudioFile: "请先添加音频文件到播放列表"
+                navMenu: "导航菜单", searchPlaceholder: "搜索网站...", adminLogin: "管理员登录", passwordPlaceholder: "请输入管理密码", login: "登录", adminPanel: "管理面板", globalSettings: "全局设置", backgroundPlaceholder: "输入背景图片 URL", saveBackground: "保存背景", categoryManagement: "分类管理", newCategoryPlaceholder: "新分类名称", sidebar: "侧边栏", topbar: "顶部栏", siteManagement: "网站管理", selectCategory: "选择一个分类", siteNamePlaceholder: "网站名称", siteUrlPlaceholder: "网站 URL", iconUrlPlaceholder: "图标 URL (可选)", siteDescPlaceholder: "网站简介", addSite: "添加网站", allSites: "所有网站", noSitesFound: "没有找到网站。", passwordIncorrect: "密码错误，请重试。", backgroundSaved: "背景已保存！", backgroundSaveFailed: "背景保存失败。", fillRequiredFields: "请填写所有必填字段。", confirmCategoryDeletion: "确定要删除这个分类吗？其下的所有网站也会被一并删除。", confirmSiteDeletion: "确定要删除这个网站吗？", dataLoadFailed: "数据加载失败。请按 F12 查看浏览器控制台获取更多信息，并确保后端 API 运行正常。", modalOk: "好的", modalCancel: "取消", modalConfirm: "确定", saveOrder: "保存顺序", orderSaved: "顺序已保存！", editSite: "编辑网站", saveChanges: "保存更改", siteUpdated: "网站已成功更新！", noAudioFile: "请先添加音频文件到播放列表", saveSettings: "保存设置", settingsSaved: "设置已保存！", backgroundLabel: "背景图片 URL", musicPlatformLabel: "音乐平台", playlistIdLabel: "歌单 ID", playlistIdPlaceholder: "输入歌单 ID"
             }
         };
 
@@ -442,6 +460,7 @@
         let state = {
             categories: [], sites: [], selectedCategory: 'all', isLoggedIn: false, currentLanguage: 'zh', currentTheme: 'dark', editingSiteId: null
         };
+        let musicCapsuleInstance; // To hold the music player instance
 
         // --- DOM Elements Cache ---
         const DOMElements = {
@@ -464,7 +483,9 @@
             loginError: document.getElementById('login-error'),
             adminLogoutBtn: document.getElementById('admin-logout-btn'),
             backgroundUrlInput: document.getElementById('background-url-input'),
-            saveBackgroundBtn: document.getElementById('save-background-btn'),
+            musicServerInput: document.getElementById('music-server-input'),
+            playlistIdInput: document.getElementById('playlist-id-input'),
+            saveSettingsBtn: document.getElementById('save-settings-btn'),
             addCategoryForm: document.getElementById('add-category-form'),
             categoryNameInput: document.getElementById('category-name-input'),
             categoryTypeSelect: document.getElementById('category-type-select'),
@@ -492,19 +513,19 @@
             genericModalButtons: document.getElementById('generic-modal-buttons'),
         };
 
-        // --- Music Capsule Class ---
+        // --- Music Capsule Class (ID Parsing FIXED) ---
         class MusicCapsule {
-            constructor() {
+            constructor(server, playlistId) {
                 this.isPlaying = false;
                 this.isCollapsed = true; 
                 this.currentTrack = 0;
                 this.audio = null;
                 this.showList = false;
                 this.playlist = [];
-                this.playMode = 'random'; // 'random' or 'sequential'
+                this.playMode = 'random';
                 
-                this.playlistId = '2250011882'; 
-                this.server = 'netease';
+                this.playlistId = playlistId || '2250011882'; 
+                this.server = server || 'netease';
                 
                 this.initializeElements();
                 this.bindEvents();
@@ -515,14 +536,21 @@
                 const apiUrl = `https://api.i-meto.com/meting/api?server=${this.server}&type=playlist&id=${this.playlistId}`;
                 try {
                     const response = await fetch(apiUrl);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const data = await response.json();
                     
-                    this.playlist = data.map(song => ({
-                        title: song.title,
-                        artist: song.author,
-                        src: song.url,
-                        cover: song.pic
-                    }));
+                    // *** CORRECTED LOGIC: Parse ID from URL string ***
+                    this.playlist = data.map(song => {
+                        // Use URLSearchParams to safely extract the 'id' parameter
+                        const urlParams = new URLSearchParams(new URL(song.url).search);
+                        const songId = urlParams.get('id');
+                        return {
+                            title: song.title,
+                            artist: song.author,
+                            id: songId, // The correctly extracted ID
+                            cover: song.pic
+                        };
+                    });
 
                     if (this.playlist.length > 0) {
                         this.initializePlaylist();
@@ -535,7 +563,7 @@
                 } catch (error) {
                     console.error("无法从Meting API获取播放列表:", error);
                     this.songTitle.textContent = "加载失败";
-                    this.artistName.textContent = "请检查网络";
+                    this.artistName.textContent = "请检查网络或ID";
                 }
             }
             
@@ -648,7 +676,7 @@
                 });
             }
             
-            selectTrack(index, autoPlay) {
+            async selectTrack(index, autoPlay) {
                 if (index < 0 || index >= this.playlist.length) return;
 
                 this.currentTrack = index;
@@ -669,44 +697,63 @@
                 
                 this.hideMusicList();
                 
-                if (track.src) {
-                    this.loadTrack(track.src, autoPlay);
+                if (track.id) {
+                    await this.loadTrack(track.id, autoPlay);
                 }
             }
             
-            loadTrack(src, autoPlay = false) {
+            async loadTrack(songId, autoPlay = false) {
                 if (this.audio) {
                     this.pause();
                     this.audio = null;
                 }
                 
-                this.audio = new Audio(src);
+                const songUrlApi = `https://wyy-api-three.vercel.app/song/url?id=${songId}&quality=320k`;
                 
-                this.audio.addEventListener('timeupdate', () => {
-                    if (this.audio.duration) {
-                        const progress = (this.audio.currentTime / this.audio.duration) * 100;
-                        this.progressFill.style.width = `${progress}%`;
-                    }
-                });
-                
-                this.audio.addEventListener('ended', () => {
-                    this.nextTrack();
-                });
+                try {
+                    const response = await fetch(songUrlApi);
+                    const data = await response.json();
+                    
+                    const audioSrc = data.data[0]?.url;
 
-                if (autoPlay) {
-                    this.play();
+                    if (!audioSrc) {
+                        console.error("Audio source URL not found for song ID:", songId);
+                        this.artistName.textContent = "无法播放";
+                        this.nextTrack(); // Try next song
+                        return;
+                    }
+                    
+                    this.audio = new Audio(audioSrc);
+                    
+                    this.audio.addEventListener('timeupdate', () => {
+                        if (this.audio.duration) {
+                            const progress = (this.audio.currentTime / this.audio.duration) * 100;
+                            this.progressFill.style.width = `${progress}%`;
+                        }
+                    });
+                    
+                    this.audio.addEventListener('ended', () => {
+                        this.nextTrack();
+                    });
+
+                    if (autoPlay) {
+                        this.play();
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch song URL:", error);
+                    this.artistName.textContent = "加载音频失败";
                 }
             }
             
-            togglePlayPause() {
+            async togglePlayPause() {
                 if (this.playlist.length === 0) {
                     customAlert('noAudioFile');
                     return;
                 }
                 if (!this.audio) {
                     const currentTrackData = this.playlist[this.currentTrack];
-                    if (currentTrackData && currentTrackData.src) {
-                        this.loadTrack(currentTrackData.src, true);
+                    if (currentTrackData && currentTrackData.id) {
+                        await this.loadTrack(currentTrackData.id, true);
                     }
                     return;
                 }
@@ -720,7 +767,12 @@
             
             play() {
                 if (this.audio) {
-                    this.audio.play().catch(error => console.error("Audio play failed:", error));
+                    this.audio.play().catch(error => {
+                        console.error("Audio play failed:", error);
+                        // If autoplay fails, user interaction is needed.
+                        // We can't do much here, but we can update the UI.
+                        this.pause(); 
+                    });
                     this.isPlaying = true;
                     this.capsule.classList.add('playing');
                     this.updatePlayButton(false);
@@ -745,7 +797,7 @@
                 this.playPauseBtnCollapsed.querySelector('svg path').setAttribute('d', icon);
             }
             
-            nextTrack() {
+            async nextTrack() {
                 let nextIndex;
                 if (this.playMode === 'sequential') {
                     nextIndex = (this.currentTrack + 1) % this.playlist.length;
@@ -758,7 +810,7 @@
                         } while (nextIndex === this.currentTrack);
                     }
                 }
-                this.selectTrack(nextIndex, this.isPlaying);
+                await this.selectTrack(nextIndex, this.isPlaying);
             }
             
             toggleMusicList() {
@@ -1040,12 +1092,28 @@
                 }
             };
             DOMElements.searchInput.oninput = filterAndRenderSites;
-            DOMElements.saveBackgroundBtn.onclick = async () => {
-                const url = DOMElements.backgroundUrlInput.value.trim();
-                if (url) {
-                    try { await api.post('settings', { backgroundUrl: url }); customAlert('backgroundSaved'); document.body.style.backgroundImage = `url('${url}')`; } catch (err) { customAlert('backgroundSaveFailed'); console.error(err); }
+            
+            DOMElements.saveSettingsBtn.onclick = async () => {
+                const backgroundUrl = DOMElements.backgroundUrlInput.value.trim();
+                const musicServer = DOMElements.musicServerInput.value;
+                const playlistId = DOMElements.playlistIdInput.value.trim();
+
+                // Save to localStorage
+                localStorage.setItem('backgroundUrl', backgroundUrl);
+                localStorage.setItem('musicServer', musicServer);
+                localStorage.setItem('playlistId', playlistId);
+                
+                // Apply settings immediately
+                document.body.style.backgroundImage = `url('${backgroundUrl}')`;
+                if (musicCapsuleInstance) {
+                    musicCapsuleInstance.server = musicServer;
+                    musicCapsuleInstance.playlistId = playlistId;
+                    musicCapsuleInstance.fetchPlaylist();
                 }
+
+                customAlert('settingsSaved');
             };
+
             DOMElements.addCategoryForm.onsubmit = async (e) => { e.preventDefault(); const name = DOMElements.categoryNameInput.value.trim(); const type = DOMElements.categoryTypeSelect.value; if (name) { await api.post('categories', { name, type }); DOMElements.categoryNameInput.value = ''; loadInitialData(); } };
 
             DOMElements.siteForm.onsubmit = async (e) => {
@@ -1222,27 +1290,25 @@
 
         // --- Application Initialization ---
         async function loadInitialData() {
-            try {
-                const [settings, categories, sites] = await Promise.all([
-                    api.get('settings'),
-                    api.get('categories'),
-                    api.get('sites'),
-                ]);
-
-                if (settings && settings.value) {
-                    DOMElements.body.style.backgroundImage = `url('${settings.value}')`;
-                    DOMElements.body.style.backgroundSize = 'cover';
-                    DOMElements.body.style.backgroundPosition = 'center';
-                    DOMElements.body.style.backgroundAttachment = 'fixed';
-                    DOMElements.backgroundUrlInput.value = settings.value;
-                }
-                state.categories = categories || [];
-                state.sites = sites || [];
-            } catch (error) {
-                console.error("Failed to load initial data:", error);
-                const errorMsg = `${translations[state.currentLanguage].dataLoadFailed} (Status: ${error.status || 'N/A'})`;
-                customAlert(errorMsg, false);
+            // This function is for site/category data, which you might implement later.
+            // For now, we focus on settings from localStorage.
+            
+            const savedBg = localStorage.getItem('backgroundUrl');
+            if (savedBg) {
+                document.body.style.backgroundImage = `url('${savedBg}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundAttachment = 'fixed';
+                DOMElements.backgroundUrlInput.value = savedBg;
             }
+
+            const savedServer = localStorage.getItem('musicServer');
+            const savedPlaylistId = localStorage.getItem('playlistId');
+            if (savedServer) DOMElements.musicServerInput.value = savedServer;
+            if (savedPlaylistId) DOMElements.playlistIdInput.value = savedPlaylistId;
+
+            // Initialize or re-initialize the music player with saved or default values
+            musicCapsuleInstance = new MusicCapsule(savedServer, savedPlaylistId);
         }
 
         async function init() {
@@ -1268,9 +1334,6 @@
             setLanguage(savedLang || browserLang);
 
             initSakuraEffect();
-
-            // Initialize the music capsule
-            new MusicCapsule();
         }
 
         init();
