@@ -540,7 +540,7 @@
                             let actualUrl = '';
                             if (songId) {
                                 try {
-                                    const urlResponse = await fetch(`https://wyy-api-three.vercel.app/song/url?id=${songId}&quality=320k`);
+                                    const urlResponse = await fetch(`https://music.gittle.ggff.net/?id=${songId}`);
                                     const urlData = await urlResponse.json();
                         
                                     // 从返回的JSON中提取url字段
