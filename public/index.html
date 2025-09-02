@@ -1,137 +1,533 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>林jioujiou的导航站</title>
-    <script src="<https://cdn.tailwindcss.com">></script>
-    <link href="<https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"> rel="stylesheet">
-    <script src="<https://unpkg.com/lucide@latest">></script>
-    <script src="<https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js">></script>
+    <title>𝙄𝙆𝙐𝙉导航站 - 音乐播放器演示</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        html[lang="zh-CN"] body { 
-            font-family: 'Inter', 'Helvetica Neue', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', 'Microsoft Yahei', sans-serif; 
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a202c, #2d3748);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        body { 
-            font-family: 'Inter', sans-serif; 
-            transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out; 
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(30, 30, 46, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-top: 30px;
         }
-
-        .backdrop-blur-md { 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px); 
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-        .modal { 
-            display: none; 
+        
+        .subtitle {
+            text-align: center;
+            color: #a0aec0;
+            margin-bottom: 40px;
         }
-        .modal.active { 
-            display: flex; 
+        
+        .section {
+            margin-bottom: 40px;
         }
-        .icon-preview { 
-            width: 32px; 
-            height: 32px; 
-            object-fit: contain; 
-            border-radius: 6px; 
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #ffd93d;
+            border-bottom: 2px solid #ff6b6b;
+            padding-bottom: 10px;
         }
-
-        /* 深色/浅色模式主题 */
-        .light-mode {
-            --bg-color: #f3f4f6;
-            --text-color: #1f2937;
-            --text-muted: #6b7280;
-            --ui-bg: rgba(255, 255, 255, 0.4);
-            --ui-border: #e5e7eb;
-            --input-bg: #e5e7eb;
-            --input-text: #111827;
-            --hover-bg: #d1d5db;
-            --modal-bg: #ffffff;
-            --panel-bg: #f9fafb;
-            --card-bg: rgba(255, 255, 255, 0.4);
-            --card-hover-bg: rgba(255, 255, 255, 0.8);
+        
+        .music-capsule {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-radius: 50px;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
-
-        body.light-mode { 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
+        
+        .album-cover {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            position: relative;
         }
-        .light-mode .bg-black.bg-opacity-10 { 
-            background-color: var(--ui-bg); 
-            border-bottom: 1px solid var(--ui-border); 
+        
+        .album-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
-        .light-mode .bg-gray-700 { 
-            background-color: var(--input-bg); 
+        
+        .music-info {
+            flex: 1;
+            overflow: hidden;
         }
-        .light-mode .text-gray-400 { 
-            color: var(--text-muted); 
+        
+        .song-title {
+            font-size: 18px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 5px;
         }
-        .light-mode input, .light-mode select, .light-mode textarea { 
-            color: var(--input-text); 
+        
+        .artist-name {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .light-mode .hover\:bg-gray-700:hover { 
-            background-color: var(--hover-bg); 
+        
+        .controls {
+            display: flex;
+            gap: 10px;
         }
-        .light-mode .bg-gray-800 { 
-            background-color: var(--modal-bg); 
+        
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: white;
         }
-        .light-mode .bg-gray-900 { 
-            background-color: var(--panel-bg); 
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
         }
-        .light-mode .bg-black.bg-opacity-20 { 
-            background-color: var(--card-bg); 
+        
+        .progress-container {
+            width: 100%;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 15px;
+            overflow: hidden;
         }
-        .light-mode .hover\:bg-opacity-60:hover { 
-            background-color: var(--card-hover-bg); 
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
+            width: 30%;
+            transition: width 0.1s linear;
         }
-
-        /* 拖拽排序样式 */
-        .sortable-ghost { 
-            opacity: 0.4; 
-            background: #4a5568; 
+        
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
         }
-        .sortable-chosen { 
-            background: #2d3748; 
+        
+        .playlist {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
         }
-        .drag-handle { 
-            cursor: grab; 
+        
+        .playlist-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #ffd93d;
         }
-        .drag-handle:active { 
-            cursor: grabbing; 
+        
+        .song-item {
+            padding: 10px 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: background 0.2s;
+            cursor: pointer;
         }
-        .light-mode .sortable-ghost { 
-            background: #cbd5e1; 
+        
+        .song-item:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
-        .light-mode .sortable-chosen { 
-            background: #e5e7eb; 
+        
+        .song-item.active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .song-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        .song-info {
+            flex: 1;
+        }
+        
+        .song-item-title {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+        
+        .song-item-artist {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .sakura-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .feature-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .feature-list {
+            padding-left: 20px;
+        }
+        
+        .feature-list li {
+            margin-bottom: 8px;
+            position: relative;
+        }
+        
+        .feature-list li:before {
+            content: "•";
+            color: #ffd93d;
+            position: absolute;
+            left: -15px;
         }
     </style>
 </head>
-<body class="dark:bg-gray-900 dark:text-white">
-    <!-- 页面主体内容 -->
-    <!-- 这里保留其他页面元素 -->
+<body>
+    <div class="sakura-container" id="sakura-canvas"></div>
+    
+    <h1>𝙄𝙆𝙐𝙉导航站</h1>
+    <p class="subtitle">音乐播放器与樱花特效演示</p>
+    
+    <div class="container">
+        <div class="section">
+            <h2>音乐播放器</h2>
+            <div class="music-capsule">
+                <div class="album-cover">
+                    <img src="https://picsum.photos/200" alt="专辑封面">
+                </div>
+                <div class="music-info">
+                    <div class="song-title">夏天的风</div>
+                    <div class="artist-name">周杰伦</div>
+                    <div class="progress-container">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="time-info">
+                        <span>1:24</span>
+                        <span>4:30</span>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="control-btn">
+                        <i data-lucide="shuffle"></i>
+                    </button>
+                    <button class="control-btn">
+                        <i data-lucide="skip-back"></i>
+                    </button>
+                    <button class="control-btn" style="background: #ff6b6b">
+                        <i data-lucide="play"></i>
+                    </button>
+                    <button class="control-btn">
+                        <i data-lucide="skip-forward"></i>
+                    </button>
+                    <button class="control-btn">
+                        <i data-lucide="list"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="playlist">
+                <div class="playlist-title">播放列表</div>
+                <div class="song-item active">
+                    <img src="https://picsum.photos/200" alt="专辑封面">
+                    <div class="song-info">
+                        <div class="song-item-title">夏天的风</div>
+                        <div class="song-item-artist">周杰伦</div>
+                    </div>
+                </div>
+                <div class="song-item">
+                    <img src="https://picsum.photos/201" alt="专辑封面">
+                    <div class="song-info">
+                        <div class="song-item-title">七里香</div>
+                        <div class="song-item-artist">周杰伦</div>
+                    </div>
+                </div>
+                <div class="song-item">
+                    <img src="https://picsum.photos/202" alt="专辑封面">
+                    <div class="song-info">
+                        <div class="song-item-title">晴天</div>
+                        <div class="song-item-artist">周杰伦</div>
+                    </div>
+                </div>
+                <div class="song-item">
+                    <img src="https://picsum.photos/203" alt="专辑封面">
+                    <div class="song-info">
+                        <div class="song-item-title">稻香</div>
+                        <div class="song-item-artist">周杰伦</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>樱花特效</h2>
+            <div class="feature-card">
+                <div class="feature-title">
+                    <div class="feature-icon">
+                        <i data-lucide="flower-2"></i>
+                    </div>
+                    <span>动态樱花飘落效果</span>
+                </div>
+                <ul class="feature-list">
+                    <li>多种花瓣形状和大小</li>
+                    <li>自然飘落动画</li>
+                    <li>可调整飘落速度</li>
+                    <li>响应式设计，适应不同屏幕</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>功能特点</h2>
+            <div class="feature-card">
+                <div class="feature-title">
+                    <div class="feature-icon">
+                        <i data-lucide="music"></i>
+                    </div>
+                    <span>音乐播放器</span>
+                </div>
+                <ul class="feature-list">
+                    <li>支持播放/暂停、上一首/下一首</li>
+                    <li>播放进度显示与控制</li>
+                    <li>播放列表管理</li>
+                    <li>随机播放模式</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-title">
+                    <div class="feature-icon">
+                        <i data-lucide="globe"></i>
+                    </div>
+                    <span>多语言支持</span>
+                </div>
+                <ul class="feature-list">
+                    <li>中英文切换</li>
+                    <li>自动根据浏览器语言设置</li>
+                    <li>本地存储语言偏好</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-title">
+                    <div class="feature-icon">
+                        <i data-lucide="moon"></i>
+                    </div>
+                    <span>主题切换</span>
+                </div>
+                <ul class="feature-list">
+                    <li>暗黑/明亮模式</li>
+                    <li>跟随系统设置</li>
+                    <li>自定义主题颜色</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // 删除音乐相关代码
+        // 初始化Lucide图标
         lucide.createIcons();
-
-        // 主题切换功能
-        const themeToggle = document.getElementById('theme-toggle');
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        
+        // 樱花特效实现
+        function initSakuraEffect() {
+            const canvas = document.getElementById('sakura-canvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            let petals = [];
+            
+            // 调整canvas大小以适应窗口
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // 花瓣形状函数
+            const petalShapes = [
+                (ctx, x, y, size) => {
+                    ctx.beginPath();
+                    ctx.ellipse(x, y, size, size*0.6, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                },
+                (ctx, x, y, size) => {
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.bezierCurveTo(
+                        x + size, y - size,
+                        x + size*2, y - size,
+                        x + size*2, y
+                    );
+                    ctx.bezierCurveTo(
+                        x + size*2, y + size,
+                        x + size, y + size,
+                        x, y + size*2
+                    );
+                    ctx.bezierCurveTo(
+                        x - size, y + size,
+                        x - size*2, y + size,
+                        x - size*2, y
+                    );
+                    ctx.bezierCurveTo(
+                        x - size*2, y - size,
+                        x - size, y - size,
+                        x, y
+                    );
+                    ctx.fill();
+                }
+            ];
+            
+            // 花瓣类
+            class Petal {
+                constructor() {
+                    this.size = Math.random() * 10 + 5;
+                    this.x = Math.random() * canvas.width;
+                    this.y = -this.size;
+                    this.speedY = Math.random() * 2 + 1;
+                    this.speedX = Math.random() * 1 - 0.5;
+                    this.rotation = Math.random() * Math.PI;
+                    this.rotationSpeed = Math.random() * 0.1 - 0.05;
+                    this.shape = Math.floor(Math.random() * petalShapes.length);
+                    this.alpha = Math.random() * 0.5 + 0.5;
+                    this.color = `rgba(255, 192, 203, ${this.alpha})`;
+                }
+                
+                update() {
+                    this.y += this.speedY;
+                    this.x += this.speedX;
+                    this.rotation += this.rotationSpeed;
+                    
+                    // 如果花瓣飘出屏幕，重置到顶部
+                    if (this.y > canvas.height + this.size || 
+                        this.x < -this.size || 
+                        this.x > canvas.width + this.size) {
+                        this.x = Math.random() * canvas.width;
+                        this.y = -this.size;
+                    }
+                }
+                
+                draw() {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation);
+                    ctx.fillStyle = this.color;
+                    petalShapes[this.shape](ctx, 0, 0, this.size);
+                    ctx.restore();
+                }
+            }
+            
+            // 创建花瓣
+            function createPetals() {
+                const petalCount = Math.floor(canvas.width / 20);
+                for (let i = 0; i < petalCount; i++) {
+                    petals.push(new Petal());
+                }
+            }
+            
+            // 动画循环
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                for (let i = 0; i < petals.length; i++) {
+                    petals[i].update();
+                    petals[i].draw();
+                }
+                
+                requestAnimationFrame(animate);
+            }
+            
+            createPetals();
+            animate();
         }
-
-        // 拖拽排序功能
-        const sortable = Sortable.create(document.getElementById('links-container'), {
-            handle: '.drag-handle',
-            animation: 150,
-            ghostClass: 'sortable-ghost',
-            chosenClass: 'sortable-chosen'
-        });
-
-        // 初始化主题
-        if (localStorage.getItem('theme') === 'light') {
-            document.body.classList.add('light-mode');
-        }
+        
+        // 初始化樱花特效
+        initSakuraEffect();
     </script>
 </body>
 </html>
