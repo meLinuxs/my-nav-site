@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>林jioujiou的导航站</title>
+    <title>𝙄𝙆𝙐𝙉导航站</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -164,7 +164,7 @@
             <div id="generic-modal-buttons" class="flex justify-center space-x-4"></div>
         </div>
     </div>
-
+    
     <script type="module">
         // --- i18n Translations ---
         const translations = {
@@ -177,7 +177,7 @@
         };
 
         // --- Global State and Configuration ---
-        const ADMIN_PASSWORD = "lin12345";
+        const ADMIN_PASSWORD = "password123";
 
         let state = {
             categories: [], sites: [], selectedCategory: 'all', isLoggedIn: false, currentLanguage: 'zh', currentTheme: 'dark', editingSiteId: null
@@ -322,7 +322,7 @@
             const text = translations[state.currentLanguage][key];
             showModal(text, [
                 { text: translations[state.currentLanguage].modalCancel, class: 'flex-1 bg-gray-600 hover:bg-gray-700 rounded-md py-2 px-4 font-semibold' },
-                { text: translations[state.currentLanguage].modalConfirm, class: 'flex-1 bg-red-600 hover:bg-red-700 rounded-md py-极速模式 px-4 font-semibold', onClick: onConfirm }
+                { text: translations[state.currentLanguage].modalConfirm, class: 'flex-1 bg-red-600 hover:bg-red-700 rounded-md py-2 px-4 font-semibold', onClick: onConfirm }
             ]);
         }
 
@@ -349,7 +349,7 @@
             };
             ['sidebarNav', 'mobileSidebarNav', 'topbarNav'].forEach(key => DOMElements[key].innerHTML = '');
             const allSitesCategory = { id: 'all', name: 'All Sites', i18nKey: 'allSites' };
-            DOMElements.sidebarNav.appendChild(createLink(all极速模式SitesCategory));
+            DOMElements.sidebarNav.appendChild(createLink(allSitesCategory));
             DOMElements.mobileSidebarNav.appendChild(createLink(allSitesCategory, true));
             state.categories.forEach(cat => {
                 if (cat.type === 'sidebar') {
@@ -444,7 +444,7 @@
                 const cat = state.categories.find(c => c.id == site.categoryId);
                 const div = document.createElement('div');
                 div.className = 'bg-gray-700 p-3 rounded-lg flex items-center justify-between flex-wrap gap-2';
-                div.innerHTML = `<div class="flex items-center gap-3"><img src="${site.icon || `https://www.google.com/s2/favicons?domain=${site.url}&sz=32`}" class="w-8 h-8 rounded object-contain" onerror="this.onerror=null;this.src='https://placehold.co/32x32/777/eee?text=${site.name.charAt(0)}';"><div><p class="font-semibold">${site.name}</p><p class="text-xs text-gray-400">${cat ? cat.name : 'N/A'}</p></div></div><div class="flex items-center gap-2"><a href="${site.url}" target="_blank" class="p-2 text-blue-400 hover:text-blue-300"><i data-lucide="external-link" class="w-4 h-4"></i></a><button data-id="${site.id}" class="edit-site-btn p-2 text-yellow-400 hover:text-yellow-300"><i data-lucide="file-pen-line" class="w-4 h-4"></i></button><button data-id="${site.id}" class="delete-site-btn p-2 text-red-500 hover:text-red-400"><极速模式 data-lucide="trash-2" class="w-4 h-4"></i></button></div>`;
+                div.innerHTML = `<div class="flex items-center gap-3"><img src="${site.icon || `https://www.google.com/s2/favicons?domain=${site.url}&sz=32`}" class="w-8 h-8 rounded object-contain" onerror="this.onerror=null;this.src='https://placehold.co/32x32/777/eee?text=${site.name.charAt(0)}';"><div><p class="font-semibold">${site.name}</p><p class="text-xs text-gray-400">${cat ? cat.name : 'N/A'}</p></div></div><div class="flex items-center gap-2"><a href="${site.url}" target="_blank" class="p-2 text-blue-400 hover:text-blue-300"><i data-lucide="external-link" class="w-4 h-4"></i></a><button data-id="${site.id}" class="edit-site-btn p-2 text-yellow-400 hover:text-yellow-300"><i data-lucide="file-pen-line" class="w-4 h-4"></i></button><button data-id="${site.id}" class="delete-site-btn p-2 text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`;
                 DOMElements.sitesListAdmin.appendChild(div);
             });
 
@@ -561,7 +561,7 @@
                 const sidebarList = document.getElementById('sortable-sidebar');
                 const topbarList = document.getElementById('sortable-topbar');
                 const sidebarIds = sidebarList ? Array.from(sidebarList.children).map(el => el.dataset.id) : [];
-                const topbarIds = topbarList ? Array.from(topbarList.children).map(el => el.dataset.id极速模式) : [];
+                const topbarIds = topbarList ? Array.from(topbarList.children).map(el => el.dataset.id) : [];
                 const orderedIds = [...sidebarIds, ...topbarIds];
                 try {
                     await api.post('categories/order', { orderedIds });
@@ -644,8 +644,8 @@
             const savedLang = localStorage.getItem('lang');
             const browserLang = navigator.language.startsWith('zh') ? 'zh' : 'en';
             setLanguage(savedLang || browserLang);
-
-            renderAll();
+            
+            lucide.createIcons();
         }
 
         init();
