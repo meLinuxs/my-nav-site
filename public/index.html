@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>𝙄𝙆𝙐𝙉导航站</title>
+    <title>林jioujiou的导航站</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -18,21 +18,6 @@
         .modal { display: none; }
         .modal.active { display: flex; }
         .icon-preview { width: 32px; height: 32px; object-fit: contain; border-radius: 6px; }
-
-        /* Sakura Canvas Effect */
-        #sakura-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-            transition: opacity 0.5s ease-in-out;
-        }
-        body.sakura-disabled #sakura-canvas {
-            opacity: 0;
-        }
 
         /* Light Mode Theme */
         .light-mode {
@@ -69,216 +54,122 @@
         .light-mode .sortable-ghost { background: #cbd5e1; }
         .light-mode .sortable-chosen { background: #e5e7eb; }
 
-        /* --- Music Capsule Styles --- */
-        .music-capsule {
-            background: var(--ui-bg, rgba(255, 255, 255, 0.1));
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--ui-border, rgba(255, 255, 255, 0.2));
-            padding: 8px 12px 8px 8px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        /* Site Card Styles */
+        .site-card {
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+        .site-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Modern Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .light-mode ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .light-mode ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Gradient Background */
+        body {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            background-attachment: fixed;
+        }
+        
+        /* Floating Action Button */
+        .fab {
             position: fixed;
-            bottom: 5px;
-            left: 5px;
-            z-index: 1000;
-            height: 56px;
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            width: 300px;
-            border-radius: 50px;
-        }
-        .music-capsule.collapsed {
-            width: 56px;
-            padding: 8px;
-        }
-        .album-cover {
-            width: 40px;
-            height: 40px;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: linear-gradient(45deg, #ff6b6b, #ffd93d);
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            flex-shrink: 0;
-            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             cursor: pointer;
-            /* Optimization: Promote to its own layer for smoother animation */
-            transform: translateZ(0);
+            z-index: 100;
+            transition: all 0.3s ease;
         }
-        #albumArtContainer {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #albumArtContainer img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .album-cover .music-icon {
-            color: var(--text-color, white);
-            font-size: 18px;
-        }
-        .music-info-wrapper {
-            flex-grow: 1;
-            min-width: 0;
-            opacity: 1;
-            transition: opacity 0.2s ease 0.1s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .music-capsule.collapsed .music-info-wrapper {
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.1s ease;
-        }
-        .music-info { 
-            flex: 1; 
-            overflow: hidden; 
-        }
-        .song-title {
-            color: var(--text-color, white);
-            font-size: 14px;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 2px;
-        }
-        .artist-name {
-            color: var(--text-muted, rgba(255, 255, 255, 0.8));
-            font-size: 12px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .play-pause-btn, .collapse-btn, .playlist-btn, .shuffle-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-        .play-pause-btn:hover, .collapse-btn:hover, .playlist-btn:hover, .shuffle-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+        .fab:hover {
             transform: scale(1.1);
-        }
-        .play-pause-btn svg, .collapse-btn svg, .playlist-btn svg, .shuffle-btn svg {
-            width: 14px;
-            height: 14px;
-            stroke: var(--text-color, white);
-            stroke-width: 1.5;
-        }
-        .play-pause-btn svg {
-            fill: var(--text-color, white);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
         }
         
-        #playPauseBtnCollapsed {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.4);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
+        /* Featured Sites Section */
+        .featured-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
         }
-
-        .music-capsule.collapsed .album-cover:hover #playPauseBtnCollapsed {
-            opacity: 1;
-            pointer-events: auto;
+        .featured-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
         }
-
-        .music-capsule.collapsed .controls {
-            display: none;
-        }
-
-        .music-capsule:not(.collapsed) #playPauseBtnCollapsed {
-            display: none;
-        }
-
-        .progress-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 0 0 50px 50px;
-            overflow: hidden;
-            opacity: 1;
-            transition: opacity 0.2s ease 0.1s;
-        }
-        .music-capsule.collapsed .progress-bar {
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.1s ease;
-        }
-        .progress-fill {
-            height: 100%;
+        .featured-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
             background: linear-gradient(90deg, #ff6b6b, #ffd93d);
-            width: 0%;
-            transition: width 0.1s linear;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .music-capsule.playing .album-cover {
-            animation: rotate 10s linear infinite;
-        }
-        .music-list {
-            position: fixed;
-            bottom: 65px;
-            left: 5px;
-            background: var(--ui-bg, rgba(255, 255, 255, 0.1));
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--ui-border, rgba(255, 255, 255, 0.2));
-            border-radius: 12px;
-            padding: 12px;
-            max-width: 300px;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(20px);
-            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-            z-index: 999;
-            max-height: 220px; 
-            overflow-y: auto; 
-        }
-        .music-list::-webkit-scrollbar { width: 6px; }
-        .music-list::-webkit-scrollbar-track { background: transparent; margin: 10px 0; }
-        .music-list::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.3); border-radius: 3px; }
-        .light-mode .music-list::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.3); }
-        .music-list.show { opacity: 1; visibility: visible; transform: translateY(0); }
-        .music-item { padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px; }
-        .music-item:hover { background: rgba(0, 0, 0, 0.1); }
-        .music-item.active { background: rgba(0, 0, 0, 0.2); }
-        .music-item-title { color: var(--text-color, white); font-size: 13px; font-weight: 500; }
-        .music-item-artist { color: var(--text-muted, rgba(255, 255, 255, 0.7)); font-size: 11px; }
         
-        @media (max-width: 480px) {
-            .music-capsule { left: 5px; bottom: 5px; max-width: 250px; }
-            .music-list { left: 5px; bottom: 50px; max-width: 250px; }
+        /* Quick Search Bar */
+        .quick-search {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 8px 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
         }
-        /* --- End of Music Capsule Styles --- */
-
+        .quick-search input {
+            background: transparent;
+            border: none;
+            color: white;
+            flex: 1;
+            padding: 5px 10px;
+            outline: none;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .site-card {
+                width: 100%;
+            }
+            #sidebar {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+        
         #app-container.sidebar-collapsed #sidebar { width: 0; padding-left: 0; padding-right: 0; overflow: hidden; transform: translateX(-100%); }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
-    <canvas id="sakura-canvas"></canvas>
-
     <div id="app-container" class="flex h-screen">
         <aside id="sidebar" class="bg-black bg-opacity-10 backdrop-blur-md w-64 p-6 hidden md:flex flex-col flex-shrink-0 transition-all duration-300">
             <h1 class="text-2xl font-bold mb-8 text-center" data-i18n-key="navMenu">导航菜单</h1>
@@ -299,7 +190,6 @@
                 </div>
                 <nav id="topbar-nav" class="hidden lg:flex items-center space-x-4"></nav>
                 <div class="flex items-center space-x-2">
-                    <button id="sakura-toggle-btn" class="p-2 rounded-md hover:bg-gray-700 transition-opacity"><i data-lucide="flower-2"></i></button>
                     <button id="theme-switcher" class="p-2 rounded-md hover:bg-gray-700">
                         <i data-lucide="sun" class="theme-icon-sun"></i>
                         <i data-lucide="moon" class="theme-icon-moon hidden"></i>
@@ -308,7 +198,46 @@
                     <button id="admin-login-btn" class="p-2 rounded-md hover:bg-gray-700"><i data-lucide="settings"></i></button>
                 </div>
             </header>
-            <div id="content-grid" class="flex-1 p-8 overflow-y-auto"></div>
+            
+            <div class="quick-search">
+                <i data-lucide="search" class="text-gray-400 mr-2"></i>
+                <input type="text" placeholder="快速搜索网站..." class="bg-transparent">
+            </div>
+            
+            <div class="featured-section">
+                <div class="featured-header">
+                    <i data-lucide="star" class="text-yellow-400"></i>
+                    <h2>精选网站</h2>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <div class="site-card bg-black bg-opacity-20 backdrop-blur-md rounded-xl p-4 flex flex-col items-center text-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-600 rounded-xl flex items-center justify-center mb-3">
+                            <i data-lucide="github" class="text-white"></i>
+                        </div>
+                        <h3 class="font-semibold">GitHub</h3>
+                    </div>
+                    <div class="site-card bg-black bg-opacity-20 backdrop-blur-md rounded-xl p-4 flex flex-col items-center text-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-400 rounded-xl flex items-center justify-center mb-3">
+                            <i data-lucide="youtube" class="text-white"></i>
+                        </div>
+                        <h3 class="font-semibold">YouTube</h3>
+                    </div>
+                    <div class="site-card bg-black bg-opacity-20 backdrop-blur-md rounded-xl p-4 flex flex-col items-center text-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-400 rounded-xl flex items-center justify-center mb-3">
+                            <i data-lucide="message-square" class="text-white"></i>
+                        </div>
+                        <h3 class="font-semibold">知乎</h3>
+                    </div>
+                    <div class="site-card bg-black bg-opacity-20 backdrop-blur-md rounded-xl p-4 flex flex-col items-center text-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl flex items-center justify-center mb-3">
+                            <i data-lucide="shopping-bag" class="text-white"></i>
+                        </div>
+                        <h3 class="font-semibold">淘宝</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="content-grid" class="flex-1 p-4 md:p-8 overflow-y-auto"></div>
         </main>
     </div>
 
@@ -387,72 +316,33 @@
         </div>
     </div>
     
-    <!-- Music Capsule Component -->
-    <div class="music-capsule" id="musicCapsule">
-        <div class="album-cover" id="albumCover">
-            <div id="albumArtContainer">
-                       <div class="music-icon">♪</div>
-            </div>
-            <button class="play-pause-btn" id="playPauseBtnCollapsed">
-                <svg viewBox="0 0 24 24">
-                    <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.68L9.54 5.98C8.87 5.55 8 6.03 8 6.82z"/>
-                </svg>
-            </button>
-        </div>
-        <div class="music-info-wrapper">
-            <div class="music-info" id="musicInfo">
-                <div class="song-title" id="songTitle">歌曲加载中</div>
-                <div class="artist-name" id="artistName"> </div>
-            </div>
-             <div class="controls flex items-center gap-2">
-                <button class="shuffle-btn" id="shuffleBtn">
-                    <svg class="shuffle-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="16 16 21 16 21 21"></polyline><line x1="4" y1="4" x2="11" y2="11"></line></svg>
-                    <svg class="repeat-icon hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
-                </button>
-                <button class="playlist-btn" id="playlistBtn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-                </button>
-                <button class="play-pause-btn" id="playPauseBtnExpanded">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.68L9.54 5.98C8.87 5.55 8 6.03 8 6.82z"/>
-                    </svg>
-                </button>
-                <button class="collapse-btn" id="collapseBtn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                </button>
-            </div>
-        </div>
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
+    <!-- Floating Action Button -->
+    <div class="fab" id="add-site-fab">
+        <i data-lucide="plus" class="text-white text-2xl"></i>
     </div>
-
-    <!-- Music List -->
-    <div class="music-list" id="musicList">
-        <!-- Playlist items will be generated by JavaScript -->
-    </div>
-
 
     <script type="module">
         // --- i18n Translations ---
         const translations = {
             en: {
-                navMenu: "Navigation Menu", searchPlaceholder: "Search sites...", adminLogin: "Admin Login", passwordPlaceholder: "Enter admin password", login: "Login", adminPanel: "Admin Panel", globalSettings: "Global Settings", backgroundPlaceholder: "Enter background image URL", saveBackground: "Save Background", categoryManagement: "Category Management", newCategoryPlaceholder: "New category name", sidebar: "Sidebar", topbar: "Topbar", siteManagement: "Site Management", selectCategory: "Select a category", siteNamePlaceholder: "Site Name", siteUrlPlaceholder: "Site URL", iconUrlPlaceholder: "Icon URL (optional)", siteDescPlaceholder: "Site Description", addSite: "Add Site", allSites: "All Sites", noSitesFound: "No sites found.", passwordIncorrect: "Incorrect password, please try again.", backgroundSaved: "Background saved successfully!", backgroundSaveFailed: "Failed to save background.", fillRequiredFields: "Please fill in all required fields.", confirmCategoryDeletion: "Are you sure you want to delete this category? All associated sites will also be deleted.", confirmSiteDeletion: "Are you sure you want to delete this site?", dataLoadFailed: "Failed to load data. Please check the browser console (F12) for more details and ensure the backend API is running correctly.", modalOk: "OK", modalCancel: "Cancel", modalConfirm: "Confirm", saveOrder: "Save Order", orderSaved: "Order saved successfully!", editSite: "Edit Site", saveChanges: "Save Changes", siteUpdated: "Site updated successfully!", noAudioFile: "Please add an audio file to the playlist first.", loadingPlaylists: "Loading playlists...", gettingAudioUrl: "Getting audio URL...", getUrlFailed: "Failed to get audio URL", noAvailableSongs: "No available songs", checkApiConfig: "Please check API or playlist config"
+                navMenu: "Navigation Menu", searchPlaceholder: "Search sites...", adminLogin: "Admin Login", passwordPlaceholder: "Enter admin password", login: "Login", adminPanel: "Admin Panel", globalSettings: "Global Settings", backgroundPlaceholder: "Enter background image URL", saveBackground: "Save Background", categoryManagement: "Category Management", newCategoryPlaceholder: "New category name", sidebar: "Sidebar", topbar: "Topbar", siteManagement: "Site Management", selectCategory: "Select a category", siteNamePlaceholder: "Site Name", siteUrlPlaceholder: "Site URL", iconUrlPlaceholder: "Icon URL (optional)", siteDescPlaceholder: "Site Description", addSite: "Add Site", allSites: "All Sites", noSitesFound: "No sites found.", passwordIncorrect: "Incorrect password, please try again.", backgroundSaved: "Background saved successfully!", backgroundSaveFailed: "Failed to save background.", fillRequiredFields: "Please fill in all required fields.", confirmCategoryDeletion: "Are you sure you want to delete this category? All associated sites will also be deleted.", confirmSiteDeletion: "Are you sure you want to delete this site?", dataLoadFailed: "Failed to load data. Please check the browser console (F12) for more details and ensure the backend API is running correctly.", modalOk: "OK", modalCancel: "Cancel", modalConfirm: "Confirm", saveOrder: "Save Order", orderSaved: "Order saved successfully!", editSite: "Edit Site", saveChanges: "Save Changes", siteUpdated: "Site updated successfully!"
             },
             zh: {
-                navMenu: "导航菜单", searchPlaceholder: "搜索网站...", adminLogin: "管理员登录", passwordPlaceholder: "请输入管理密码", login: "登录", adminPanel: "管理面板", globalSettings: "全局设置", backgroundPlaceholder: "输入背景图片 URL", saveBackground: "保存背景", categoryManagement: "分类管理", newCategoryPlaceholder: "新分类名称", sidebar: "侧边栏", topbar: "顶部栏", siteManagement: "网站管理", selectCategory: "选择一个分类", siteNamePlaceholder: "网站名称", siteUrlPlaceholder: "网站 URL", iconUrlPlaceholder: "图标 URL (可选)", siteDescPlaceholder: "网站简介", addSite: "添加网站", allSites: "所有网站", noSitesFound: "没有找到网站。", passwordIncorrect: "密码错误，请重试。", backgroundSaved: "背景已保存！", backgroundSaveFailed: "背景保存失败。", fillRequiredFields: "请填写所有必填字段。", confirmCategoryDeletion: "确定要删除这个分类吗？其下的所有网站也会被一并删除。", confirmSiteDeletion: "确定要删除这个网站吗？", dataLoadFailed: "数据加载失败。请按 F12 查看浏览器控制台获取更多信息，并确保后端 API 运行正常。", modalOk: "好的", modalCancel: "取消", modalConfirm: "确定", saveOrder: "保存顺序", orderSaved: "顺序已保存！", editSite: "编辑网站", saveChanges: "保存更改", siteUpdated: "网站已成功更新！", noAudioFile: "请先添加音频文件到播放列表", loadingPlaylists: "正在加载歌单...", gettingAudioUrl: "正在获取音频链接...", getUrlFailed: "获取音频链接失败", noAvailableSongs: "无可用歌曲", checkApiConfig: "请检查API或歌单配置"
+                navMenu: "导航菜单", searchPlaceholder: "搜索网站...", adminLogin: "管理员登录", passwordPlaceholder: "请输入管理密码", login: "登录", adminPanel: "管理面板", globalSettings: "全局设置", backgroundPlaceholder: "输入背景图片 URL", saveBackground: "保存背景", categoryManagement: "分类管理", newCategoryPlaceholder: "新分类名称", sidebar: "侧边栏", topbar: "顶部栏", siteManagement: "网站管理", selectCategory: "选择一个分类", siteNamePlaceholder: "网站名称", siteUrlPlaceholder: "网站 URL", iconUrlPlaceholder: "图标 URL (可选)", siteDescPlaceholder: "网站简介", addSite: "添加网站", allSites: "所有网站", noSitesFound: "没有找到网站。", passwordIncorrect: "密码错误，请重试。", backgroundSaved: "背景已保存！", backgroundSaveFailed: "背景保存失败。", fillRequiredFields: "请填写所有必填字段。", confirmCategoryDeletion: "确定要删除这个分类吗？其下的所有网站也会被一并删除。", confirmSiteDeletion: "确定要删除这个网站吗？", dataLoadFailed: "数据加载失败。请按 F12 查看浏览器控制台获取更多信息，并确保后端 API 运行正常。", modalOk: "好的", modalCancel: "取消", modalConfirm: "确定", saveOrder: "保存顺序", orderSaved: "顺序已保存！", editSite: "编辑网站", saveChanges: "保存更改", siteUpdated: "网站已成功更新！"
             }
         };
 
         // --- Global State and Configuration ---
         const ADMIN_PASSWORD = "password123";
-        const PLAYLISTS = [
-            { server: 'netease', id: '2250011882' },
-            { server: 'netease', id: '24381616' },
-        ];
-
+        
         let state = {
-            categories: [], sites: [], selectedCategory: 'all', isLoggedIn: false, currentLanguage: 'zh', currentTheme: 'dark', editingSiteId: null, isSakuraEnabled: true
+            categories: [], 
+            sites: [], 
+            selectedCategory: 'all', 
+            isLoggedIn: false, 
+            currentLanguage: 'zh', 
+            currentTheme: 'dark', 
+            editingSiteId: null
         };
 
         // --- DOM Elements Cache ---
@@ -468,7 +358,6 @@
             adminLoginBtn: document.getElementById('admin-login-btn'),
             langSwitcher: document.getElementById('lang-switcher'),
             themeSwitcher: document.getElementById('theme-switcher'),
-            sakuraToggleBtn: document.getElementById('sakura-toggle-btn'),
             adminModal: document.getElementById('admin-modal'),
             adminLoginView: document.getElementById('admin-login-view'),
             adminPanelView: document.getElementById('admin-panel-view'),
@@ -503,300 +392,8 @@
             genericModal: document.getElementById('generic-modal'),
             genericModalText: document.getElementById('generic-modal-text'),
             genericModalButtons: document.getElementById('generic-modal-buttons'),
+            addSiteFab: document.getElementById('add-site-fab')
         };
-
-        // --- Music Capsule Class (Final Version) ---
-        class MusicCapsule {
-            constructor() {
-                this.isPlaying = false;
-                this.isCollapsed = true; 
-                this.currentTrack = 0;
-                this.audio = null;
-                this.showList = false;
-                this.playlist = [];
-                this.isLoading = true;
-                this.playMode = 'random';
-                
-                this.initializeElements();
-                this.bindEvents();
-                this.fetchPlaylists();
-            }
-
-            async fetchPlaylists() {
-                this.isLoading = true;
-                this.songTitle.textContent = translations[state.currentLanguage].loadingPlaylists || "Loading playlists...";
-                this.artistName.textContent = '...';
-
-                const allSongs = [];
-                for (const list of PLAYLISTS) {
-                    const apiUrl = `https://api.i-meto.com/meting/api?server=${list.server}&type=playlist&id=${list.id}`;
-                    try {
-                        const response = await fetch(apiUrl);
-                        const data = await response.json();
-                        const songs = data.map(song => {
-                            let songId = song.id;
-                            if (!songId && song.url && song.url.includes('id=')) {
-                                const match = song.url.match(/id=(\d+)/);
-                                if (match) songId = match[1];
-                            }
-                            return {
-                                title: song.title,
-                                artist: song.author,
-                                src: null,
-                                cover: song.pic,
-                                id: songId,
-                                server: song.server || list.server,
-                            };
-                        });
-                        allSongs.push(...songs);
-                    } catch (error) {
-                        console.error(`Failed to fetch playlist ${list.id} from ${list.server}:`, error);
-                    }
-                }
-
-                this.playlist = allSongs;
-                this.isLoading = false;
-
-                if (this.playlist.length > 0) {
-                    this.initializePlaylist();
-                    this.selectTrack(0, false);
-                    console.log(`Successfully loaded metadata for ${this.playlist.length} songs`);
-                } else {
-                    this.songTitle.textContent = translations[state.currentLanguage].noAvailableSongs || "No available songs";
-                    this.artistName.textContent = translations[state.currentLanguage].checkApiConfig || "Check API/playlist config";
-                }
-            }
-
-            async getTrackUrl(index) {
-                if (index < 0 || index >= this.playlist.length) return null;
-                const track = this.playlist[index];
-
-                if (track.src) return track.src;
-
-                this.songTitle.textContent = translations[state.currentLanguage].gettingAudioUrl || "Getting audio URL...";
-
-                try {
-                    const response = await fetch(`https://music1.gittle.ggff.net/?id=${track.id}`);
-                    
-                    if (!response.ok) {
-                        throw new Error(`API request failed with status ${response.status}`);
-                    }
-
-                    const data = await response.json();
-
-                    if (data && data.url) {
-                        this.playlist[index].src = data.url;
-                        this.songTitle.textContent = track.title;
-                        return data.url;
-                    } else {
-                        throw new Error(`No URL found in API response for song ID ${track.id}`);
-                    }
-                } catch (error) {
-                    console.error(`Failed to fetch URL for song ID ${track.id}:`, error);
-                    this.songTitle.textContent = translations[state.currentLanguage].getUrlFailed || "Failed to get URL";
-                    return null;
-                }
-            }
-            
-            initializeElements() {
-                this.capsule = document.getElementById('musicCapsule');
-                this.albumCover = document.getElementById('albumCover');
-                this.albumArtContainer = document.getElementById('albumArtContainer');
-                this.songTitle = document.getElementById('songTitle');
-                this.artistName = document.getElementById('artistName');
-                this.playPauseBtnExpanded = document.getElementById('playPauseBtnExpanded');
-                this.playPauseBtnCollapsed = document.getElementById('playPauseBtnCollapsed');
-                this.collapseBtn = document.getElementById('collapseBtn');
-                this.playlistBtn = document.getElementById('playlistBtn');
-                this.shuffleBtn = document.getElementById('shuffleBtn');
-                this.progressFill = document.getElementById('progressFill');
-                this.musicList = document.getElementById('musicList');
-                this.musicInfo = document.getElementById('musicInfo');
-                
-                this.capsule.classList.toggle('collapsed', this.isCollapsed);
-                this.updateShuffleIcon();
-            }
-            
-            bindEvents() {
-                this.playPauseBtnExpanded.addEventListener('click', (e) => { e.stopPropagation(); this.togglePlayPause(); });
-                this.playPauseBtnCollapsed.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (this.isCollapsed) this.expand();
-                    this.togglePlayPause();
-                });
-                
-                this.albumCover.addEventListener('click', (e) => {
-                    if (e.target.closest('.play-pause-btn') || !this.isCollapsed) return;
-                    this.expand();
-                });
-                
-                this.collapseBtn.addEventListener('click', (e) => { e.stopPropagation(); this.collapse(); });
-                this.playlistBtn.addEventListener('click', (e) => { e.stopPropagation(); this.toggleMusicList(); });
-                this.shuffleBtn.addEventListener('click', (e) => { e.stopPropagation(); this.togglePlayMode(); });
-
-                document.addEventListener('click', (e) => {
-                    if (!this.capsule.contains(e.target) && !this.musicList.contains(e.target)) {
-                        this.hideMusicList();
-                    }
-                });
-            }
-            
-            togglePlayMode() {
-                this.playMode = this.playMode === 'random' ? 'sequential' : 'random';
-                this.updateShuffleIcon();
-            }
-            
-            updateShuffleIcon() {
-                const shuffleIcon = this.shuffleBtn.querySelector('.shuffle-icon');
-                const repeatIcon = this.shuffleBtn.querySelector('.repeat-icon');
-                shuffleIcon.classList.toggle('hidden', this.playMode !== 'random');
-                repeatIcon.classList.toggle('hidden', this.playMode === 'random');
-            }
-
-            expand() { this.isCollapsed = false; this.capsule.classList.remove('collapsed'); }
-            collapse() { this.isCollapsed = true; this.capsule.classList.add('collapsed'); this.hideMusicList(); }
-            
-            initializePlaylist() {
-                const listContainer = this.musicList;
-                listContainer.innerHTML = '';
-                
-                this.playlist.forEach((track, index) => {
-                    const item = document.createElement('div');
-                    item.className = `music-item ${index === this.currentTrack ? 'active' : ''}`;
-                    item.innerHTML = `
-                        <div>
-                            <div class="music-item-title">${track.title}</div>
-                            <div class="music-item-artist">${track.artist}</div>
-                        </div>
-                    `;
-                    item.addEventListener('click', (e) => { e.stopPropagation(); this.selectTrack(index, true); });
-                    listContainer.appendChild(item);
-                });
-            }
-            
-            selectTrack(index, autoPlay) {
-                if (index < 0 || index >= this.playlist.length) return;
-
-                this.currentTrack = index;
-                const track = this.playlist[index];
-                
-                this.songTitle.textContent = track.title;
-                this.artistName.textContent = track.artist;
-                
-                this.albumArtContainer.innerHTML = track.cover ? `<img src="${track.cover}" alt="Album Cover">` : '<div class="music-icon">♪</div>';
-                
-                this.musicList.querySelectorAll('.music-item').forEach((item, i) => {
-                    item.classList.toggle('active', i === index);
-                });
-                
-                this.hideMusicList();
-                
-                if (this.audio) {
-                    this.pause();
-                    this.audio = null;
-                }
-                this.progressFill.style.width = '0%';
-
-                if (autoPlay) {
-                    this.play();
-                }
-            }
-            
-            loadTrack(src, autoPlay = false) {
-                if (this.audio) { this.pause(); this.audio = null; }
-                
-                this.audio = new Audio(src);
-                
-                this.audio.addEventListener('timeupdate', () => {
-                    if (this.audio.duration) {
-                        const progress = (this.audio.currentTime / this.audio.duration) * 100;
-                        this.progressFill.style.width = `${progress}%`;
-                    }
-                });
-                
-                this.audio.addEventListener('ended', () => this.nextTrack());
-                this.audio.addEventListener('error', (e) => {
-                    console.error("Audio error:", e);
-                    this.songTitle.textContent = "播放错误，跳到下一首";
-                    setTimeout(() => this.nextTrack(), 1500);
-                });
-
-                if (autoPlay) this.play();
-            }
-            
-            togglePlayPause() {
-                if (this.isPlaying) this.pause();
-                else this.play();
-            }
-            
-            async play() {
-                if (this.isLoading || this.playlist.length === 0) return;
-
-                const track = this.playlist[this.currentTrack];
-                if (!track) return;
-
-                if (!track.src) {
-                    const url = await this.getTrackUrl(this.currentTrack);
-                    if (!url) {
-                        setTimeout(() => this.nextTrack(), 1500);
-                        return;
-                    }
-                }
-
-                if (!this.audio || this.audio.src !== track.src) {
-                    this.loadTrack(track.src);
-                }
-
-                this.audio.play().catch(error => console.error("Audio play failed:", error));
-                this.isPlaying = true;
-                this.capsule.classList.add('playing');
-                this.updatePlayButton(false);
-            }
-            
-            pause() {
-                if (this.audio) {
-                    this.audio.pause();
-                    this.isPlaying = false;
-                    this.capsule.classList.remove('playing');
-                    this.updatePlayButton(true);
-                }
-            }
-            
-            updatePlayButton(isPlay) {
-                const playIcon = 'M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.68L9.54 5.98C8.87 5.55 8 6.03 8 6.82z';
-                const pauseIcon = 'M8 19c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2v10c0 1.1.9 2 2 2zm6-12v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2z';
-                const icon = isPlay ? playIcon : pauseIcon;
-                this.playPauseBtnExpanded.querySelector('svg path').setAttribute('d', icon);
-                this.playPauseBtnCollapsed.querySelector('svg path').setAttribute('d', icon);
-            }
-            
-            nextTrack() {
-                if (this.playlist.length === 0) return;
-                let nextIndex;
-                if (this.playMode === 'sequential') {
-                    nextIndex = (this.currentTrack + 1) % this.playlist.length;
-                } else { // random
-                    if (this.playlist.length <= 1) {
-                        nextIndex = 0;
-                    } else {
-                        do { nextIndex = Math.floor(Math.random() * this.playlist.length); } while (nextIndex === this.currentTrack);
-                    }
-                }
-                this.selectTrack(nextIndex, this.isPlaying);
-            }
-            
-            toggleMusicList() {
-                if(this.isCollapsed || this.playlist.length === 0) return;
-                this.showList = !this.showList;
-                this.musicList.classList.toggle('show', this.showList);
-            }
-            
-            hideMusicList() {
-                this.showList = false;
-                this.musicList.classList.remove('show');
-            }
-        }
-
 
         // --- API Client ---
         const api = {
@@ -865,13 +462,6 @@
             }
         }
 
-        function updateSakuraState(enabled) {
-            state.isSakuraEnabled = enabled;
-            localStorage.setItem('sakuraEffect', enabled ? 'enabled' : 'disabled');
-            DOMElements.body.classList.toggle('sakura-disabled', !enabled);
-            DOMElements.sakuraToggleBtn.classList.toggle('opacity-50', !enabled);
-        }
-
         function showModal(text, buttons) {
             DOMElements.genericModalText.textContent = text;
             DOMElements.genericModalButtons.innerHTML = '';
@@ -937,7 +527,7 @@
         function renderSites(sitesToRender) {
             DOMElements.contentGrid.innerHTML = '';
             if (!sitesToRender || sitesToRender.length === 0) {
-                DOMElements.contentGrid.innerHTML = `<p class="text-gray-400">${translations[state.currentLanguage].noSitesFound}</p>`;
+                DOMElements.contentGrid.innerHTML = `<p class="text-gray-400 text-center py-8">${translations[state.currentLanguage].noSitesFound}</p>`;
                 return;
             }
             const sitesByCat = sitesToRender.reduce((acc, site) => { (acc[site.categoryId] = acc[site.categoryId] || []).push(site); return acc; }, {});
@@ -950,15 +540,19 @@
                 catTitle.className = 'text-2xl font-bold mb-4 mt-6 first:mt-0';
                 DOMElements.contentGrid.appendChild(catTitle);
                 const grid = document.createElement('div');
-                grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-8';
+                grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4';
                 sitesByCat[catId].forEach(site => {
                     const card = document.createElement('a');
                     card.href = site.url;
                     card.target = '_blank';
                     card.rel = 'noopener noreferrer';
-                    card.className = 'bg-black bg-opacity-20 backdrop-blur-md rounded-lg p-3 flex flex-col items-center text-center hover:bg-opacity-60 transform hover:-translate-y-1 transition-all';
+                    card.className = 'site-card bg-black bg-opacity-20 backdrop-blur-md rounded-xl p-4 flex flex-col items-center text-center hover:bg-opacity-60';
                     const iconUrl = site.icon || `https://www.google.com/s2/favicons?domain=${site.url}&sz=64`;
-                    card.innerHTML = `<img src="${iconUrl}" alt="${site.name}" class="w-16 h-16 mb-4 rounded-lg object-contain" onerror="this.onerror=null;this.src='https://placehold.co/64x64/777/eee?text=${site.name.charAt(0)}';"><h3 class="font-semibold text-lg mb-1 truncate w-full">${site.name}</h3><p class="text-gray-400 text-sm flex-grow">${site.description || '&nbsp;'}</p>`;
+                    card.innerHTML = `
+                        <img src="${iconUrl}" alt="${site.name}" class="w-12 h-12 mb-3 rounded-lg object-contain" onerror="this.onerror=null;this.src='https://placehold.co/48x48/777/eee?text=${site.name.charAt(0)}';">
+                        <h3 class="font-semibold text-base mb-1 truncate w-full">${site.name}</h3>
+                        <p class="text-gray-400 text-xs flex-grow">${site.description || '&nbsp;'}</p>
+                    `;
                     grid.appendChild(card);
                 });
                 DOMElements.contentGrid.appendChild(grid);
@@ -1053,7 +647,6 @@
         function setupEventListeners() {
             DOMElements.langSwitcher.onclick = () => { setLanguage(state.currentLanguage === 'en' ? 'zh' : 'en'); };
             DOMElements.themeSwitcher.onclick = () => { setTheme(state.currentTheme === 'light' ? 'dark' : 'light'); };
-            DOMElements.sakuraToggleBtn.onclick = () => { updateSakuraState(!state.isSakuraEnabled); };
             DOMElements.adminLoginBtn.onclick = () => DOMElements.adminModal.classList.add('active');
             DOMElements.adminLogoutBtn.onclick = () => { DOMElements.adminModal.classList.remove('active'); DOMElements.adminLoginView.style.display = 'block'; DOMElements.adminPanelView.style.display = 'none'; DOMElements.passwordInput.value = ''; state.isLoggedIn = false; resetSiteForm(); };
             DOMElements.adminModal.onclick = e => { if (e.target === DOMElements.adminModal) DOMElements.adminLogoutBtn.click(); };
@@ -1156,6 +749,10 @@
             DOMElements.mobileMenuToggle.onclick = (e) => { e.stopPropagation(); toggleMobileSidebar(); };
             DOMElements.mobileSidebarClose.onclick = toggleMobileSidebar;
             DOMElements.desktopSidebarToggle.onclick = toggleDesktopSidebar;
+            DOMElements.addSiteFab.onclick = () => {
+                DOMElements.adminModal.classList.add('active');
+                DOMElements.adminLoginBtn.click();
+            };
         }
 
         // --- Sidebar Toggle Functions ---
@@ -1170,90 +767,6 @@
             const iconName = isCollapsed ? 'panel-right-close' : 'panel-left-close';
             DOMElements.desktopSidebarIcon.outerHTML = `<i data-lucide="${iconName}" id="desktop-sidebar-icon"></i>`;
             lucide.createIcons();
-        }
-
-        // --- Sakura Effect ---
-        function initSakuraEffect() {
-            const canvas = document.getElementById('sakura-canvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            let petals = [];
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            const petalShapes = [
-                (ctx, s) => { const scale = s / 10; ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(scale, -scale*2, scale*2, -scale*2, scale*2, 0); ctx.bezierCurveTo(scale*2, scale*2, scale, scale*2, 0, scale*4); ctx.bezierCurveTo(-scale, scale*2, -scale*2, scale*2, -scale*2, 0); ctx.bezierCurveTo(-scale*2, -scale*2, -scale, -scale*2, 0, 0); ctx.fill(); ctx.closePath(); },
-                (ctx, s) => { const scale = s / 10; ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(scale * 2, scale * 2, scale * 4, 0); ctx.quadraticCurveTo(scale * 2, -scale * 2, 0, 0); ctx.fill(); ctx.closePath(); },
-                (ctx, s) => { const scale = s / 10; ctx.beginPath(); ctx.arc(0, 0, scale * 2, 0, Math.PI); ctx.quadraticCurveTo(-scale * 2, -scale * 2, 0, 0); ctx.fill(); ctx.closePath(); },
-                (ctx, s) => { const scale = s / 10; ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(scale * 3, scale, scale * 3, -scale * 2, scale * 5, -scale * 3); ctx.bezierCurveTo(scale * 2, -scale, 0, 0, 0, 0); ctx.fill(); ctx.closePath(); },
-                (ctx, s) => { const scale = s / 10; ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(scale, -scale * 2, scale * 3, -scale * 2); ctx.quadraticCurveTo(scale * 2, 0, 0, 0); ctx.fill(); ctx.closePath(); }
-            ];
-
-            class Petal {
-                constructor() {
-                    this.depth = Math.random();
-                    this.size = ((this.depth * 8) + 5) * 7.5; 
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * -canvas.height;
-                    this.speedY = (this.depth * 0.8) + 0.7;
-                    this.angle = Math.random() * Math.PI * 2;
-                    this.spin = Math.random() < 0.5 ? -1 : 1;
-                    this.sway = Math.random() * 1.5 + 0.5;
-                    this.color = `rgba(255, 192, 203, ${this.depth * 0.5 + 0.5})`;
-                    this.shapeId = Math.floor(Math.random() * petalShapes.length);
-                }
-                update() {
-                    this.y += this.speedY;
-                    this.x += Math.sin(this.angle) * this.sway;
-                    this.angle += 0.03 * this.spin;
-                    if (this.y > canvas.height + this.size || this.x < -this.size || this.x > canvas.width + this.size) {
-                        this.x = Math.random() * canvas.width;
-                        this.y = -this.size;
-                    }
-                }
-                draw() {
-                    ctx.save();
-                    ctx.translate(this.x, this.y);
-                    ctx.rotate(this.angle);
-                    // PERFORMANCE FIX: Removed expensive shadow rendering
-                    // ctx.shadowColor = 'rgba(255, 255, 255, 0.7)';
-                    // ctx.shadowBlur = 5;
-                    ctx.fillStyle = this.color;
-                    petalShapes[this.shapeId](ctx, this.size);
-                    ctx.restore();
-                }
-            }
-
-            function initPetals() {
-                // PERFORMANCE FIX: Reduced number of petals
-                const numberOfPetals = Math.floor(window.innerWidth / 70);
-                petals = []; // Clear existing petals before re-initializing
-                for (let i = 0; i < numberOfPetals; i++) {
-                    petals.push(new Petal());
-                }
-            }
-
-            function animate() {
-                // Always clear the canvas
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                // Only update and draw petals if the effect is enabled
-                if (state.isSakuraEnabled) {
-                    for (let i = 0; i < petals.length; i++) {
-                        petals[i].update();
-                        petals[i].draw();
-                    }
-                }
-                requestAnimationFrame(animate);
-            }
-
-            window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                initPetals();
-            });
-
-            initPetals();
-            animate();
         }
 
         // --- Application Initialization ---
@@ -1302,14 +815,8 @@
             const savedLang = localStorage.getItem('lang');
             const browserLang = navigator.language.startsWith('zh') ? 'zh' : 'en';
             setLanguage(savedLang || browserLang);
-            
-            const savedSakuraState = localStorage.getItem('sakuraEffect');
-            updateSakuraState(savedSakuraState !== 'disabled');
 
-            initSakuraEffect();
-
-            // Initialize the music capsule
-            new MusicCapsule();
+            renderAll();
         }
 
         init();
