@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,118 +54,6 @@
         .light-mode .sortable-ghost { background: #cbd5e1; }
         .light-mode .sortable-chosen { background: #e5e7eb; }
 
-        /* Site Card Styles */
-        .site-card {
-            transition: all 0.3s ease;
-            transform: translateY(0);
-        }
-        .site-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Modern Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
-        .light-mode ::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.2);
-        }
-        .light-mode ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 0, 0, 0.4);
-        }
-        
-        /* Gradient Background */
-        body {
-            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-            background-attachment: fixed;
-        }
-        
-        /* Floating Action Button */
-        .fab {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            z-index: 100;
-            transition: all 0.3s ease;
-        }
-        .fab:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
-        }
-        
-        /* Featured Sites Section */
-        .featured-section {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        .featured-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .featured-header h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        /* Quick Search Bar */
-        .quick-search {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50px;
-            padding: 8px 15px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-        }
-        .quick-search input {
-            background: transparent;
-            border: none;
-            color: white;
-            flex: 1;
-            padding: 5px 10px;
-            outline: none;
-        }
-        
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .site-card {
-                width: 100%;
-            }
-            #sidebar {
-                width: 100%;
-                max-width: 300px;
-            }
-        }
-        
         #app-container.sidebar-collapsed #sidebar { width: 0; padding-left: 0; padding-right: 0; overflow: hidden; transform: translateX(-100%); }
     </style>
 </head>
@@ -198,46 +86,7 @@
                     <button id="admin-login-btn" class="p-2 rounded-md hover:bg-gray-700"><i data-lucide="settings"></i></button>
                 </div>
             </header>
-            
-            <div class="quick-search">
-                <i data-lucide="search" class="text-gray-400 mr-2"></i>
-                <input type="text" placeholder="快速搜索网站..." class="bg-transparent">
-            </div>
-            
-            <div class="featured-section">
-                <div class="featured-header">
-                    <i data-lucide="star" class="text-yellow-400"></i>
-                    <h2>精选网站</h2>
-                </div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    <div class="site-card bg-black bg-opacity-20 backdrop-blur-md rounded-xl p-4 flex flex-col items-center text-center">
-                        <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-600 rounded-xl flex items-center justify-center mb-3">
-                            <i data-lucide="github" class="text-white"></i>
-                        </div>
-                        <h3 class="font-semibold">GitHub</h3>
-                    </div>
-                    <div class="site-card bg-black bg-opacity-20 backdrop-blur-md rounded-xl p-4 flex flex-col items-center text-center">
-                        <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-400 rounded-xl flex items-center justify-center mb-3">
-                            <i data-lucide="youtube" class="text-white"></i>
-                        </div>
-                        <h3 class="font-semibold">YouTube</h3>
-                    </div>
-                    <div class="site-card bg-black bg-opacity-20 backdrop-blur-md rounded-xl p-4 flex flex-col items-center text-center">
-                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-400 rounded-xl flex items-center justify-center mb-3">
-                            <i data-lucide="message-square" class="text-white"></i>
-                        </div>
-                        <h3 class="font-semibold">知乎</h3>
-                    </div>
-                    <div class="site-card bg-black bg-opacity-20 backdrop-blur-md rounded-xl p-4 flex flex-col items-center text-center">
-                        <div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl flex items-center justify-center mb-3">
-                            <i data-lucide="shopping-bag" class="text-white"></i>
-                        </div>
-                        <h3 class="font-semibold">淘宝</h3>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="content-grid" class="flex-1 p-4 md:p-8 overflow-y-auto"></div>
+            <div id="content-grid" class="flex-1 p-8 overflow-y-auto"></div>
         </main>
     </div>
 
@@ -315,11 +164,6 @@
             <div id="generic-modal-buttons" class="flex justify-center space-x-4"></div>
         </div>
     </div>
-    
-    <!-- Floating Action Button -->
-    <div class="fab" id="add-site-fab">
-        <i data-lucide="plus" class="text-white text-2xl"></i>
-    </div>
 
     <script type="module">
         // --- i18n Translations ---
@@ -334,15 +178,9 @@
 
         // --- Global State and Configuration ---
         const ADMIN_PASSWORD = "password123";
-        
+
         let state = {
-            categories: [], 
-            sites: [], 
-            selectedCategory: 'all', 
-            isLoggedIn: false, 
-            currentLanguage: 'zh', 
-            currentTheme: 'dark', 
-            editingSiteId: null
+            categories: [], sites: [], selectedCategory: 'all', isLoggedIn: false, currentLanguage: 'zh', currentTheme: 'dark', editingSiteId: null
         };
 
         // --- DOM Elements Cache ---
@@ -392,7 +230,6 @@
             genericModal: document.getElementById('generic-modal'),
             genericModalText: document.getElementById('generic-modal-text'),
             genericModalButtons: document.getElementById('generic-modal-buttons'),
-            addSiteFab: document.getElementById('add-site-fab')
         };
 
         // --- API Client ---
@@ -485,7 +322,7 @@
             const text = translations[state.currentLanguage][key];
             showModal(text, [
                 { text: translations[state.currentLanguage].modalCancel, class: 'flex-1 bg-gray-600 hover:bg-gray-700 rounded-md py-2 px-4 font-semibold' },
-                { text: translations[state.currentLanguage].modalConfirm, class: 'flex-1 bg-red-600 hover:bg-red-700 rounded-md py-2 px-4 font-semibold', onClick: onConfirm }
+                { text: translations[state.currentLanguage].modalConfirm, class: 'flex-1 bg-red-600 hover:bg-red-700 rounded-md py-极速模式 px-4 font-semibold', onClick: onConfirm }
             ]);
         }
 
@@ -512,7 +349,7 @@
             };
             ['sidebarNav', 'mobileSidebarNav', 'topbarNav'].forEach(key => DOMElements[key].innerHTML = '');
             const allSitesCategory = { id: 'all', name: 'All Sites', i18nKey: 'allSites' };
-            DOMElements.sidebarNav.appendChild(createLink(allSitesCategory));
+            DOMElements.sidebarNav.appendChild(createLink(all极速模式SitesCategory));
             DOMElements.mobileSidebarNav.appendChild(createLink(allSitesCategory, true));
             state.categories.forEach(cat => {
                 if (cat.type === 'sidebar') {
@@ -540,13 +377,13 @@
                 catTitle.className = 'text-2xl font-bold mb-4 mt-6 first:mt-0';
                 DOMElements.contentGrid.appendChild(catTitle);
                 const grid = document.createElement('div');
-                grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4';
+                grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-8';
                 sitesByCat[catId].forEach(site => {
                     const card = document.createElement('a');
                     card.href = site.url;
                     card.target = '_blank';
                     card.rel = 'noopener noreferrer';
-                    card.className = 'site-card bg-black bg-opacity-20 backdrop-blur-md rounded-xl p-4 flex flex-col items-center text-center hover:bg-opacity-60 transform hover:-translate-y-1 transition-all';
+                    card.className = 'bg-black bg-opacity-20 backdrop-blur-md rounded-lg p-3 flex flex-col items-center text-center hover:bg-opacity-60 transform hover:-translate-y-1 transition-all';
                     const iconUrl = site.icon || `https://www.google.com/s2/favicons?domain=${site.url}&sz=64`;
                     card.innerHTML = `<img src="${iconUrl}" alt="${site.name}" class="w-16 h-16 mb-4 rounded-lg object-contain" onerror="this.onerror=null;this.src='https://placehold.co/64x64/777/eee?text=${site.name.charAt(0)}';"><h3 class="font-semibold text-lg mb-1 truncate w-full">${site.name}</h3><p class="text-gray-400 text-sm flex-grow">${site.description || '&nbsp;'}</p>`;
                     grid.appendChild(card);
@@ -607,7 +444,7 @@
                 const cat = state.categories.find(c => c.id == site.categoryId);
                 const div = document.createElement('div');
                 div.className = 'bg-gray-700 p-3 rounded-lg flex items-center justify-between flex-wrap gap-2';
-                div.innerHTML = `<div class="flex items-center gap-3"><img src="${site.icon || `https://www.google.com/s2/favicons?domain=${site.url}&sz=32`}" class="w-8 h-8 rounded object-contain" onerror="this.onerror=null;this.src='https://placehold.co/32x32/777/eee?text=${site.name.charAt(0)}';"><div><p class="font-semibold">${site.name}</p><p class="text-xs text-gray-400">${cat ? cat.name : 'N/A'}</p></div></div><div class="flex items-center gap-2"><a href="${site.url}" target="_blank" class="p-2 text-blue-400 hover:text-blue-300"><i data-lucide="external-link" class="w-4 h-4"></i></a><button data-id="${site.id}" class="edit-site-btn p-2 text-yellow-400 hover:text-yellow-300"><i data-lucide="file-pen-line" class="w-4 h-4"></i></button><button data-id="${site.id}" class="delete-site-btn p-2 text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`;
+                div.innerHTML = `<div class="flex items-center gap-3"><img src="${site.icon || `https://www.google.com/s2/favicons?domain=${site.url}&sz=32`}" class="w-8 h-8 rounded object-contain" onerror="this.onerror=null;this.src='https://placehold.co/32x32/777/eee?text=${site.name.charAt(0)}';"><div><p class="font-semibold">${site.name}</p><p class="text-xs text-gray-400">${cat ? cat.name : 'N/A'}</p></div></div><div class="flex items-center gap-2"><a href="${site.url}" target="_blank" class="p-2 text-blue-400 hover:text-blue-300"><i data-lucide="external-link" class="w-4 h-4"></i></a><button data-id="${site.id}" class="edit-site-btn p-2 text-yellow-400 hover:text-yellow-300"><i data-lucide="file-pen-line" class="w-4 h-4"></i></button><button data-id="${site.id}" class="delete-site-btn p-2 text-red-500 hover:text-red-400"><极速模式 data-lucide="trash-2" class="w-4 h-4"></i></button></div>`;
                 DOMElements.sitesListAdmin.appendChild(div);
             });
 
@@ -724,7 +561,7 @@
                 const sidebarList = document.getElementById('sortable-sidebar');
                 const topbarList = document.getElementById('sortable-topbar');
                 const sidebarIds = sidebarList ? Array.from(sidebarList.children).map(el => el.dataset.id) : [];
-                const topbarIds = topbarList ? Array.from(topbarList.children).map(el => el.dataset.id) : [];
+                const topbarIds = topbarList ? Array.from(topbarList.children).map(el => el.dataset.id极速模式) : [];
                 const orderedIds = [...sidebarIds, ...topbarIds];
                 try {
                     await api.post('categories/order', { orderedIds });
@@ -745,10 +582,6 @@
             DOMElements.mobileMenuToggle.onclick = (e) => { e.stopPropagation(); toggleMobileSidebar(); };
             DOMElements.mobileSidebarClose.onclick = toggleMobileSidebar;
             DOMElements.desktopSidebarToggle.onclick = toggleDesktopSidebar;
-            DOMElements.addSiteFab.onclick = () => {
-                DOMElements.adminModal.classList.add('active');
-                DOMElements.adminLoginBtn.click();
-            };
         }
 
         // --- Sidebar Toggle Functions ---
